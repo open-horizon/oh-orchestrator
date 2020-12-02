@@ -4,7 +4,7 @@ const { getRichError } = require('@bananabread/response-helper');
 const logger = require('@bananabread/sumologic-winston-logger');
 const { getCorrelationId } = require('@bananabread/request-helper');
 
-const { nodeSync } = require('../../configuration/config');
+const { edgeNodesSyncJobInterval } = require('../../configuration/config');
 const { mdeployStatusValues } = require('../../util/nodeUtil');
 const { getCurrentNode } = require('../../external/jsonRPCRequests');
 
@@ -122,7 +122,7 @@ const start = () => getClient()
   })
   .then(() => {
     syncNodes();
-    setInterval(syncNodes, nodeSync.jobInterval * 1000);
+    setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
   });
 
 module.exports = {

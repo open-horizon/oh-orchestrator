@@ -3,7 +3,7 @@ const uuid = require('uuid');
 const { getRichError } = require('@bananabread/response-helper');
 const logger = require('@bananabread/sumologic-winston-logger');
 
-const { gatewaySync } = require('../../configuration/config');
+const { gatewayNodeSyncJobInterval } = require('../../configuration/config');
 const {
   removeAllAnaxNodes,
   initializeGatewayNodes,
@@ -49,7 +49,7 @@ const start = () => getClient()
     throw getRichError('System', 'Cannot start service initializing gateway failed', error, null, 'error');
   })
   .then(() => {
-    setInterval(syncNodes, gatewaySync.jobInterval * 1000);
+    setInterval(syncNodes, gatewayNodeSyncJobInterval * 1000);
   });
 
 module.exports = {
