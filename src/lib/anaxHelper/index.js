@@ -2,14 +2,15 @@ const Promise = require('bluebird');
 const getPort = require('get-port');
 
 const { updateAnaxState } = require('../../models/nodeModel');
-const { initializeSocket } = require('../socketHelper');
+const {
+  createNode,
+  deleteNode,
+} = require('../../external/edgedaemonRequests');
 
 const {
-  hzn: {
-    anaxContainersPortNumStart,
-    anaxContainersPortNumEnd,
-  },
   dockerSocketPath,
+  anaxContainersPortNumStart,
+  anaxContainersPortNumEnd,
 } = require('../../configuration/config');
 
 const {
@@ -90,8 +91,8 @@ const initializeAnaxNodeForEdgeNode = (node, correlationId) => {
   });
 
   return getPort({ port: getPort.makeRange(anaxContainersPortNumStart, anaxContainersPortNumEnd) })
-    .then((availableNodePort) => initializeSocket(node.id)
-      .then((customDockerSocketPath) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, customDockerSocketPath, true, correlationId)));
+    .then((availableNodePort) => createNode(node.id, dockerSocketPath, correlationId)
+      .then(({ edgeSocketPath }) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, edgeSocketPath, true, correlationId)));
 };
 
 const terminateAnaxNodeForEdgeNode = (node, correlationId) => {
@@ -99,8 +100,9 @@ const terminateAnaxNodeForEdgeNode = (node, correlationId) => {
 
   return unregisterAnaxNode(node.id, node.anaxState.nodePort, correlationId)
     .delay(timeoutBWAnaxUnregisterationAndTermination)
+    .then(() => updateAnaxState(node.id, { status: anaxStatusValues.UNCONFIGURED }))
     .then(() => undeployAnaxNode(node.id, node.anaxState.nodePort, correlationId))
-    .then(() => updateAnaxState(node.id, { status: anaxStatusValues.UNCONFIGURED }));
+    .then(() => deleteNode(node.id, correlationId));
 };
 
 const removeAllAnaxNodes = () => purgeDocker();
