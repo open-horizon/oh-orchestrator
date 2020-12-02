@@ -16,7 +16,7 @@ const saveNode = (node, correlationId) => checkIfValidNode(node, correlationId)
   })
   .then(() => {
     if (nodes[node.id]) {
-      throw getRichError('System', 'Could not save node, node already exists', { node }, null, 'error', correlationId);
+      throw getRichError('Conflict', 'Could not save node, node already exists', { node }, null, 'error', correlationId);
     }
     nodes[node.id] = node;
     return node;
