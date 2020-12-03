@@ -66,6 +66,7 @@ backup/
 package-lock.json
 mochawesome-report
 api
+temp
 
 server-start.sh
 local/start.json

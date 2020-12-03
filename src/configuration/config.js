@@ -47,6 +47,7 @@ module.exports = (() => {
       },
       EDGEDAEMON: {
         url: process.env.EDGEDAEMON_URL,
+        audience: process.env.EDGEDAEMON_AUDIENCE,
       },
     },
     custom: {
