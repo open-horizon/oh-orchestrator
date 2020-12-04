@@ -1,0 +1,30 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": "airbnb",
+  "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "brace-style": [1, "stroustrup", {"allowSingleLine": true}],
+    "no-confusing-arrow": [0],
+    "max-len": [1, 180, { "ignoreComments": true }],
+    "linebreak-style": 0,
+    "quotes": [1, "single"],
+    "semi": [1, "always"]
+  },
+  "settings": {
+    "react": {
+      "version": "latest"
+    }
+  },
+  "globals": {
+    "module": true,
+    "require": true,
+    "const": false,
+    "it": false,
+    "describe": false,
+    "before": true,
+    "after": true,
+    "JSON": true
+  }
+}

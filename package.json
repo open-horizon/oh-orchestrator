@@ -1,0 +1,73 @@
+{
+  "name": "mimik_ohorchestrator",
+  "version": "1.0.0",
+  "swaggerFile": {
+    "version": "1.0.0",
+    "account": "mimik",
+    "name": "ohorchestrator"
+  },
+  "mimik": {
+    "type": "ohorchestrator"
+  },
+  "description": "The purpose of this service is to orchestrate IBM OpenHorizon Services for mimik edgeEngine integration using edgeDaemon.",
+  "main": "./src/index.js",
+  "scripts": {
+    "lint": "gulp lint",
+    "docs": "gulp docs",
+    "pretest": "node ./local/testSetup.js",
+    "test": "nyc gulp test",
+    "prestart": "node ./local/setup.js",
+    "start": "sh server-start.sh",
+    "commit-ready": "gulp docs; gulp lint; npm run test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "gulp docs; gulp lint",
+      "commit-msg": "node ./local/commitMsgCheck",
+      "pre-push": "npm run commit-ready"
+    }
+  },
+  "Authors": [
+    {
+      "name": "Kevin",
+      "email": "kevin.toor@mimik.com"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "swagger",
+    "ohorchestrator",
+    "engine"
+  ],
+  "private": true,
+  "dependencies": {
+    "@bananabread/configuration": "4.0.0",
+    "@bananabread/dynamosizer": "1.6.3",
+    "@bananabread/init": "4.0.0",
+    "@bananabread/oauth-helper": "1.9.1",
+    "@bananabread/response-helper": "2.4.0",
+    "@bananabread/request-helper": "1.7.0",
+    "@bananabread/sumologic-winston-logger": "1.5.2",
+    "@bananabread/swagger-helper": "2.3.0",
+    "@bananabread/systeminfo": "2.3.3",
+    "bluebird": "3.7.2",
+    "connect": "3.7.0",
+    "fs-extra": "9.0.1",
+    "get-port": "5.1.1",
+    "lodash": "4.17.20",
+    "request-promise": "4.2.6",
+    "uuid": "8.3.1"
+  },
+  "devDependencies": {
+    "@bananabread/git-hooks": "~1.5.0",
+    "@bananabread/local": "~4.0.2",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-react": "7.21.5",
+    "gulp": "4.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/mimiktech/ohorchestrator"
+  }
+}
