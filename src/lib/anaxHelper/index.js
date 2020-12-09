@@ -3,6 +3,7 @@ const getPort = require('get-port');
 
 const { updateAnaxState } = require('../../models/nodeModel');
 const {
+  findNode,
   createNode,
   deleteNode,
 } = require('../../external/edgedaemonRequests');
@@ -92,6 +93,10 @@ const initializeAnaxNodeForEdgeNode = (node, correlationId) => {
 
   return getPort({ port: getPort.makeRange(anaxContainersPortNumStart, anaxContainersPortNumEnd) })
     .then((availableNodePort) => createNode(node.id, dockerSocketPath, correlationId)
+      .catch((error) => {
+        if (error.statusCode === 409) return findNode(node.id, correlationId);
+        throw error;
+      })
       .then(({ edgeSocketPath }) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, edgeSocketPath, true, correlationId)));
 };
 

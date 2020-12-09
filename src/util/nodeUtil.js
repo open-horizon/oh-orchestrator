@@ -11,7 +11,6 @@ const anaxStatusValues = {
 
 const gatewayNodeIds = {
   DOCKER: 'gatewayDocker',
-  EDGE_ENGINE: 'gatewayEdgeEngine',
 };
 
 const gatewayNodeIdsPortsMap = {};

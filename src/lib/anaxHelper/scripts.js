@@ -15,8 +15,8 @@ const {
     exchangeUserAuth,
     orgId,
     defaultNodeToken,
-    anaxStorageBasePathDir,
   },
+  anaxStorageBasePathDir,
 } = require('../../configuration/config');
 const {
   scriptFileValues,
