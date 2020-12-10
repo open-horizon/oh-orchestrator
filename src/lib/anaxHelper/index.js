@@ -19,6 +19,7 @@ const {
   gatewayNodeIdsPortsMap,
   mdeployStatusValues,
   anaxStatusValues,
+  shortenNodeId,
 } = require('../../util/nodeUtil');
 
 const {
@@ -45,7 +46,7 @@ const deployAndRegisterAnaxNode = (nodeId, nodePort, nodeProperties, customDocke
   }
 
   deployRequests[nodeId] = true;
-  const shortenedNodeId = nodeId.substr(0, 16); // Anax does not support large nodeIds, left some space for flags
+  const shortenedNodeId = shortenNodeId(nodeId); // Anax does not support large nodeIds, left some space for flags
 
   return createPolicyFile(nodeId, nodeProperties)
     .then((policyFilePath) => deployAnaxNode(shortenedNodeId, nodePort, customDockerSocketPath, correlationId)

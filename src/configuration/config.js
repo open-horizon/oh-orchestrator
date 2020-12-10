@@ -21,9 +21,10 @@ const pack = require('../../package.json');
  * | HZN_EXCHANGE_USER_AUTH | Hzn exchange user auth to be used for registering anax nodes | | example: admin:password
  * | HZN_DEFAULT_NODE_TOKEN | Hzn node token to use to register anax node with exchange | nodeToken | default nodeId is first 6 chars of edge nodeId. So node auth will be nodeId:nodeToken
  * | HZN_CLI_CONFIG_FILE | File location where hzn config is stored | /etc/default/horizon | example file content: HZN_EXCHANGE_URL=http://192.168.1.77:3090/v1/\nHZN_FSS_CSSURL=http://192.168.1.77:9443\n
+ * | HZN_ESS_OBJECT_TYPES | HZN Object types to fetch from ESS and serve using mCDN | | example: ml_model,reco_model
  * | DOCKER_SOCKET_PATH | Path to the docker daemon socket | /var/run/docker.sock |
  * | NODE_POLICIES_DIR | Directory to temporarily store node policies in | /var/tmp/oh/policies |
- * | ANAX_STORAGE_BASE_PATH_DIR | Directory to store anax data for container in | /var/tmp/oh/storage |
+ * | ANAX_CONTAINERS_STORAGE_DIR | Directory to store anax data for container in | /var/tmp/oh/storage |
  * | EDGE_NODES_SYNC_JOB_INTERVAL | Job interval to sync edge nodes using super (gateway) mdeploy | 60 |
  * | GATEWAY_NODE_SYNC_JOB_INTERVAL | Job interval to sync gateway node using super (gateway) mdeploy | 120 |
  * | ANAX_CONTAINERS_PORT_NUM_START | Port range starting point to use for anax containers | 8200 |
@@ -38,6 +39,12 @@ module.exports = (() => {
   const edgeEngineUrl = process.env.EDGE_ENGINE_URL || 'http://localhost:8083';
   const edgeEngineProjectId = process.env.EDGE_ENGINE_PROJECT_ID;
   const edgeEngineMdeployEndpoint = process.env.EDGE_ENGINE_MDEPLOY_ENDPOINT || '/mdeploy/v1';
+
+  const essOjbectTypesStr = process.env.HZN_ESS_OBJECT_TYPES;
+  let essObjectTypes;
+  if (essOjbectTypesStr && essOjbectTypesStr !== '') {
+    essObjectTypes = essOjbectTypesStr.split(',');
+  }
 
   const configuration = setConfig(pack, {
     dependencies: {
@@ -58,6 +65,7 @@ module.exports = (() => {
         exchangeUserAuth: process.env.HZN_EXCHANGE_USER_AUTH,
         defaultNodeToken: process.env.HZN_DEFAULT_NODE_TOKEN || 'nodeToken',
         cliConfigFile: process.env.HZN_CLI_CONFIG_FILE || '/etc/default/horizon',
+        essObjectTypes,
       },
       edgeEngine: {
         url: edgeEngineUrl,
@@ -66,7 +74,7 @@ module.exports = (() => {
       },
       dockerSocketPath: process.env.DOCKER_SOCKET_PATH || '/var/run/docker.sock',
       nodePoliciesDir: process.env.NODE_POLICIES_DIR || '/var/tmp/oh/policies',
-      anaxStorageBasePathDir: process.env.ANAX_STORAGE_BASE_PATH_DIR || '/var/tmp/oh/storage',
+      anaxContainersStorageDir: process.env.ANAX_CONTAINERS_STORAGE_DIR || '/var/tmp/oh/storage',
       edgeNodesSyncJobInterval: parseInt(process.env.EDGE_NODES_SYNC_JOB_INTERVAL, 10) || 60,
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
