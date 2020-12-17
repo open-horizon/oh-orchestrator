@@ -10,7 +10,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const nodeId = 'bc8ebd2abf8398338c9f8a64cc6ffb14167601a684c953f3aac39c1d';
 // const nodeId = 'nodeId';
-const agreementId = '0a152a3d0e9f77024fa7092f339649406638ec09f4a21454611f7b43ed0fd375';
+const agreementId = '67c32da854021e4d6c8648283242550b8057874aa53ea433783729cf22d3afd8';
 const objectType = 'imageRecognition';
 // const objectType = 'model';
 const objectId = 'img_reco_poc.zip';

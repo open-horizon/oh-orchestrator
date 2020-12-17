@@ -2,8 +2,8 @@ const Promise = require('bluebird');
 const fs = require('fs-extra');
 
 // const { getRichError } = require('@bananabread/response-helper');
-// const { anaxContainersStorageDir } = require('../../configuration/config');
-const anaxContainersStorageDir = '/var/tmp/oh/storage';
+const { anaxContainersStorageDir } = require('../../configuration/config');
+
 
 const { shortenNodeId } = require('../../util/nodeUtil');
 
@@ -15,6 +15,12 @@ const getRequestData = (nodeId, agreementId, correlationId) => Promise.resolve()
     const certFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/ess-auth/SSL/cert/cert.pem`;
     const essSocketFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/fss-domain-socket/essapi.sock`;
     const authKeyFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/ess-auth/${agreementId}/auth.json`;
+
+    console.log('===> files', {
+      certFilePath,
+      essSocketFilePath,
+      authKeyFilePath,
+    });
 
     authDataPromises.push(fs.access(essSocketFilePath)
       .then(() => essSocketFilePath)

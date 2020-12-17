@@ -46,6 +46,8 @@ module.exports = (() => {
     trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
 
+  const isDemo3On = process.env.IS_DEMO3_ONGOING === 'yes';
+
   const configuration = setConfig(pack, {
     dependencies: {
       MDEPLOY: {
@@ -67,9 +69,9 @@ module.exports = (() => {
         cliConfigFile: process.env.HZN_CLI_CONFIG_FILE || '/etc/default/horizon',
         ess: {
           trackedObjectTypes,
-          gatewayDeploymentPropertyType: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_TYPE || 'deployment',
-          gatewayDeploymentPropertyName: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME || 'location',
-          gatewayDeploymentPropertyValue: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE || 'gatewayNode',
+          gatewayDeploymentPropertyType: process.env.HZN_ESS_GATEWAY_DEPLOYMENT_PROPERTY_TYPE || 'deployment',
+          gatewayDeploymentPropertyName: process.env.HZN_ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME || 'location',
+          gatewayDeploymentPropertyValue: process.env.HZN_ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE || 'gatewayNode',
         },
       },
       edgeEngine: {
@@ -77,13 +79,21 @@ module.exports = (() => {
         projectId: edgeEngineProjectId,
         mdeployEndpoint: edgeEngineMdeployEndpoint,
       },
+      mcdnAuthToken: process.env.MCDN_AUTH_TOKEN || '1234',
       dockerSocketPath: process.env.DOCKER_SOCKET_PATH || '/var/run/docker.sock',
       nodePoliciesDir: process.env.NODE_POLICIES_DIR || '/var/tmp/oh/policies',
-      anaxContainersStorageDir: process.env.ANAX_CONTAINERS_STORAGE_DIR || '/var/tmp/oh/storage',
+      essObjectsStorageDir: process.env.ESS_OBJECTS_STORAGE_DIR || '/var/tmp/oh/essStorage',
+      anaxContainersStorageDir: process.env.ANAX_CONTAINERS_STORAGE_DIR || '/var/tmp/oh/anaxStorage',
+      essObjectsPollingInterval: parseInt(process.env.ESS_OBJECTS_POLLING_INTERVAL, 10) || 30000,
       edgeNodesSyncJobInterval: parseInt(process.env.EDGE_NODES_SYNC_JOB_INTERVAL, 10) || 60,
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
       anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8299,
+      demo3: {
+        isOn: isDemo3On,
+        systemToken: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
+        appIpAddress: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
+      },
     },
   });
 

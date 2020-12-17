@@ -2,6 +2,7 @@ const rp = require('request-promise');
 const fs = require('fs-extra');
 
 const {
+  mcdnAuthToken,
   edgeEngine: {
     projectId,
   },
@@ -13,11 +14,11 @@ const MCDN_FILES_ENDPOINT = `${mCDNURL}/files`;
 const postFile = (pathName, fileName, localFilePath, correlationId) => {
   const mCDNFilePath = `${MCDN_FILES_ENDPOINT}/${pathName}/${fileName}`;
 
-  rp({
+  return rp({
     uri: mCDNFilePath,
     method: 'POST',
     headers: {
-      Authorization: 'Bearer 1234',
+      Authorization: `Bearer ${mcdnAuthToken}`,
       'Content-Type': 'multipart/form-data',
     },
     formData: {
