@@ -15,7 +15,17 @@ const getObjectsByType = (nodeId, agreementId, objectType, correlationId) => get
     };
 
     const completeRequest = { ...request, ...requestData };
+    return dataRequest(nodeId, completeRequest, correlationId);
+  });
 
+const markObjectReceived = (nodeId, agreementId, objectType, objectId, correlationId) => getRequestData(nodeId, agreementId, correlationId)
+  .then((requestData) => {
+    const request = {
+      method: 'PUT',
+      path: `${ESS_REQUEST_BASE_PATH}/objects/${objectType}/${objectId}/received`,
+    };
+
+    const completeRequest = { ...request, ...requestData };
     return dataRequest(nodeId, completeRequest, correlationId);
   });
 
@@ -31,7 +41,27 @@ const downloadObjectFile = (nodeId, agreementId, objectType, objectId, outputFil
     return fileDownloadRequest(nodeId, outputFilePath, completeRequest, correlationId);
   });
 
+const establishObectTypeWebhook = (nodeId, agreementId, objectType, receiverUrl, correlationId) => getRequestData(nodeId, agreementId, correlationId)
+  .then((requestData) => {
+    const request = {
+      method: 'PUT',
+      path: `${ESS_REQUEST_BASE_PATH}/objects/${objectType}`,
+      body: JSON.stringify({
+        action: 'register',
+        url: receiverUrl,
+      }),
+    };
+
+    // TODO Remove test
+    // const test = { headers: { Authorization: `Basic ${Buffer.from('admin:password').toString('base64')}` } };
+
+    const completeRequest = { ...request, ...requestData };
+    return dataRequest(nodeId, completeRequest, correlationId);
+  });
+
 module.exports = {
   getObjectsByType,
   downloadObjectFile,
+  markObjectReceived,
+  establishObectTypeWebhook,
 };

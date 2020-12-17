@@ -7,6 +7,7 @@ const { getCorrelationId } = require('@bananabread/request-helper');
 const { edgeNodesSyncJobInterval } = require('../../configuration/config');
 const { mdeployStatusValues } = require('../../util/nodeUtil');
 const { getCurrentNode } = require('../../external/jsonRPCRequests');
+const { initializePolling } = require('../essHelper');
 
 const {
   initializeAnaxNodeForEdgeNode,
@@ -31,7 +32,10 @@ const processNode = (discoveredNode, correlationId) => {
   if (discoveredNode.isGatewayNode) return Promise.resolve();
 
   const saveAndInitialize = () => saveAndUpdateNode(discoveredNode, correlationId)
-    .then(() => initializeAnaxNodeForEdgeNode(discoveredNode, correlationId))
+    .then((node) => initializeAnaxNodeForEdgeNode(discoveredNode, correlationId)
+      .then((nodeInitialized) => {
+        if (nodeInitialized) initializePolling(node, correlationId);
+      }))
     .catch((error) => error);
 
   return findNodeById(discoveredNode.id)
@@ -122,7 +126,7 @@ const start = () => getClient()
   })
   .then(() => {
     syncNodes();
-    setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
+    // setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
   });
 
 module.exports = {

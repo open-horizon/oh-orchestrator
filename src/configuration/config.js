@@ -21,7 +21,7 @@ const pack = require('../../package.json');
  * | HZN_EXCHANGE_USER_AUTH | Hzn exchange user auth to be used for registering anax nodes | | example: admin:password
  * | HZN_DEFAULT_NODE_TOKEN | Hzn node token to use to register anax node with exchange | nodeToken | default nodeId is first 6 chars of edge nodeId. So node auth will be nodeId:nodeToken
  * | HZN_CLI_CONFIG_FILE | File location where hzn config is stored | /etc/default/horizon | example file content: HZN_EXCHANGE_URL=http://192.168.1.77:3090/v1/\nHZN_FSS_CSSURL=http://192.168.1.77:9443\n
- * | HZN_ESS_OBJECT_TYPES | HZN Object types to fetch from ESS and serve using mCDN | | example: ml_model,reco_model
+ * | HZN_ESS_TRACKED_OBJECT_TYPES | HZN Object types to fetch from ESS and serve using mCDN | | example: ml_model,reco_model
  * | DOCKER_SOCKET_PATH | Path to the docker daemon socket | /var/run/docker.sock |
  * | NODE_POLICIES_DIR | Directory to temporarily store node policies in | /var/tmp/oh/policies |
  * | ANAX_CONTAINERS_STORAGE_DIR | Directory to store anax data for container in | /var/tmp/oh/storage |
@@ -40,10 +40,10 @@ module.exports = (() => {
   const edgeEngineProjectId = process.env.EDGE_ENGINE_PROJECT_ID;
   const edgeEngineMdeployEndpoint = process.env.EDGE_ENGINE_MDEPLOY_ENDPOINT || '/mdeploy/v1';
 
-  const essOjbectTypesStr = process.env.HZN_ESS_OBJECT_TYPES;
-  let essObjectTypes;
-  if (essOjbectTypesStr && essOjbectTypesStr !== '') {
-    essObjectTypes = essOjbectTypesStr.split(',');
+  const trackedObjectTypesStr = process.env.HZN_ESS_TRACKED_OBJECT_TYPES;
+  let trackedObjectTypes;
+  if (trackedObjectTypesStr && trackedObjectTypesStr !== '') {
+    trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
 
   const configuration = setConfig(pack, {
@@ -65,7 +65,12 @@ module.exports = (() => {
         exchangeUserAuth: process.env.HZN_EXCHANGE_USER_AUTH,
         defaultNodeToken: process.env.HZN_DEFAULT_NODE_TOKEN || 'nodeToken',
         cliConfigFile: process.env.HZN_CLI_CONFIG_FILE || '/etc/default/horizon',
-        essObjectTypes,
+        ess: {
+          trackedObjectTypes,
+          gatewayDeploymentPropertyType: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_TYPE || 'deployment',
+          gatewayDeploymentPropertyName: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME || 'location',
+          gatewayDeploymentPropertyValue: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE || 'gatewayNode',
+        },
       },
       edgeEngine: {
         url: edgeEngineUrl,

@@ -84,7 +84,7 @@ const initializeGatewayNodes = () => {
 const initializeAnaxNodeForEdgeNode = (node, correlationId) => {
   if (node.mdeployStatus !== mdeployStatusValues.ACTIVE
     || (node.anaxState && node.anaxState.status === anaxStatusValues.CONFIGURED)
-    || node.isGatewayNode) return Promise.resolve();
+    || node.isGatewayNode) return Promise.resolve(false);
 
   const nodeProperties = [...node.attributes, ...node.characteristics];
   nodeProperties.push({
@@ -98,7 +98,8 @@ const initializeAnaxNodeForEdgeNode = (node, correlationId) => {
         if (error.statusCode === 409) return findNode(node.id, correlationId);
         throw error;
       })
-      .then(({ edgeSocketPath }) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, edgeSocketPath, true, correlationId)));
+      .then(({ edgeSocketPath }) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, edgeSocketPath, true, correlationId)))
+    .then(() => true);
 };
 
 const terminateAnaxNodeForEdgeNode = (node, correlationId) => {
