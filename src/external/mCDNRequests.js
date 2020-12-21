@@ -6,9 +6,12 @@ const {
   edgeEngine: {
     projectId,
   },
+  demo3: {
+    gatewayNodeIpAddress,
+  },
 } = require('../configuration/config');
 
-const mCDNURL = `http://localhost:8083/${projectId}/mcdn/v1`;
+const mCDNURL = `http://${gatewayNodeIpAddress}:8083/${projectId}/mcdn/v1`;
 const MCDN_FILES_ENDPOINT = `${mCDNURL}/files`;
 
 const postFile = (pathName, fileName, localFilePath, correlationId) => {
@@ -34,7 +37,7 @@ const postFile = (pathName, fileName, localFilePath, correlationId) => {
       }),
     },
   })
-    .then(() => mCDNFilePath);
+    .then(() => ({ mCDNURL, pathName, fileName }));
 };
 
 module.exports = {

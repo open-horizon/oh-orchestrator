@@ -92,7 +92,8 @@ module.exports = (() => {
       demo3: {
         isOn: isDemo3On,
         systemToken: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
-        appIpAddress: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
+        appIpAddress: isDemo3On ? process.env.APP_IP_ADDRESS : '192.168.68.119',
+        gatewayNodeIpAddress: isDemo3On ? process.env.GATEWAY_NODE_IP_ADDRESS: '192.168.68.102',
       },
     },
   });

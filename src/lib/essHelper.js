@@ -63,7 +63,7 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           console.log('===> downloadObjectFile error', error);
           throw error;
         })
-        // .then(() => postFile(objectType, objectId, outputFilePath, correlationId))
+        .then(() => postFile(objectType, objectId, outputFilePath, correlationId))
         .then((data) => {
           console.log('===> postFile success', data);
           return data;
@@ -72,8 +72,8 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           console.log('===> postFile error', error);
           throw error;
         })
-        .then((mcdnUrl) => {
-          if (isDemo3On) return deployModelToApp(mcdnUrl);
+        .then((mcdnFileProp) => {
+          if (isDemo3On) return deployModelToApp(mcdnFileProp);
           return undefined;
         })
         .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
