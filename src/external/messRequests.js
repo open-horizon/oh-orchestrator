@@ -2,7 +2,15 @@ const oAuthHelper = require('@bananabread/oauth-helper');
 
 const config = require('../configuration/config');
 
-const messUrl = config.dependencies.MESS.url;
+const {
+  edgeEngine: {
+    url: edgeEngineUrl,
+    projectId: edgeEngineProjectId,
+  },
+} = config;
+
+const messUrl = `${edgeEngineUrl}/${edgeEngineProjectId}/mess/v1`;
+
 
 const { rpAuth: rpAuthOrig } = oAuthHelper(config);
 

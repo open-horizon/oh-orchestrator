@@ -40,7 +40,6 @@ module.exports = (() => {
   const edgeEngineProjectId = process.env.EDGE_ENGINE_PROJECT_ID;
 
   const edgeEngineMdeployEndpoint = process.env.EDGE_ENGINE_MDEPLOY_ENDPOINT || '/mdeploy/v1';
-  const edgeEngineMessEndpoint = process.env.EDGE_ENGINE_MESS_ENDPOINT || '/mess/v1';
 
   const trackedObjectTypesStr = process.env.HZN_ESS_TRACKED_OBJECT_TYPES;
   let trackedObjectTypes;
@@ -55,10 +54,6 @@ module.exports = (() => {
       MDEPLOY: {
         url: `${edgeEngineUrl}/${edgeEngineProjectId}${edgeEngineMdeployEndpoint}`,
         audience: process.env.MDEPLOY_AUDIENCE,
-      },
-      MESS: {
-        url: `${edgeEngineUrl}/${edgeEngineProjectId}${edgeEngineMessEndpoint}`,
-        audience: process.env.MESS_AUDIENCE,
       },
       EDGEDAEMON: {
         url: process.env.EDGEDAEMON_URL,
