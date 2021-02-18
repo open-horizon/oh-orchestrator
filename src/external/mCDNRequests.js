@@ -14,7 +14,7 @@ const {
 const mCDNURL = `http://${gatewayNodeIpAddress}:8083/${projectId}/mcdn/v1`;
 const MCDN_FILES_ENDPOINT = `${mCDNURL}/files`;
 
-const postFile = (pathName, fileName, localFilePath, correlationId) => {
+const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
   const mCDNFilePath = `${MCDN_FILES_ENDPOINT}/${pathName}/${fileName}`;
 
   return rp({

@@ -2,15 +2,15 @@ const fs = require('fs-extra');
 
 const { fetchActiveAgreements } = require('../external/anaxRequests');
 
-const { postFile } = require('../external/mCDNRequests');
+const { postFile } = require('../external/messRequests');
 
 const {
   getObjectsByType,
   downloadObjectFile,
-  markObjectReceived,
+  // markObjectReceived,
 } = require('../external/essRequests');
 
-const { deployModelToApp } = require('./demoHelper');
+// const { deployModelToApp } = require('./demoHelper');
 
 const {
   hzn: {
@@ -23,9 +23,9 @@ const {
   },
   essObjectsStorageDir,
   essObjectsPollingInterval,
-  demo3: {
-    isOn: isDemo3On,
-  },
+  // demo3: {
+  // isOn: isDemo3On,
+  // },
 } = require('../configuration/config');
 
 const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => getObjectsByType(nodeId, agreementId, objectType, correlationId)
@@ -63,7 +63,7 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           console.log('===> downloadObjectFile error', error);
           throw error;
         })
-        .then(() => postFile(objectType, objectId, outputFilePath, correlationId))
+        .then(() => postFile(nodeId, objectType, objectId, outputFilePath, correlationId))
         .then((data) => {
           console.log('===> postFile success', data);
           return data;
@@ -71,19 +71,19 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
         .catch((error) => {
           console.log('===> postFile error', error);
           throw error;
-        })
-        .then((mcdnFileProp) => {
-          if (isDemo3On) return deployModelToApp(mcdnFileProp);
-          return undefined;
-        })
-        .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
-        .then((data) => {
-          console.log('===> markObjectReceived success', data);
-          return data;
-        })
-        .catch((error) => {
-          console.log('===> markObjectReceived error', error);
         });
+      // .then((mcdnFileProp) => {
+      //   if (isDemo3On) return deployModelToApp(mcdnFileProp);
+      //   return undefined;
+      // })
+      // .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
+      // .then((data) => {
+      //   console.log('===> markObjectReceived success', data);
+      //   return data;
+      // })
+      // .catch((error) => {
+      //   console.log('===> markObjectReceived error', error);
+      // });
     });
   })
   .catch(() => { });

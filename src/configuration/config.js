@@ -38,7 +38,9 @@ const pack = require('../../package.json');
 module.exports = (() => {
   const edgeEngineUrl = process.env.EDGE_ENGINE_URL || 'http://localhost:8083';
   const edgeEngineProjectId = process.env.EDGE_ENGINE_PROJECT_ID;
+
   const edgeEngineMdeployEndpoint = process.env.EDGE_ENGINE_MDEPLOY_ENDPOINT || '/mdeploy/v1';
+  const edgeEngineMessEndpoint = process.env.EDGE_ENGINE_MESS_ENDPOINT || '/mess/v1';
 
   const trackedObjectTypesStr = process.env.HZN_ESS_TRACKED_OBJECT_TYPES;
   let trackedObjectTypes;
@@ -46,13 +48,17 @@ module.exports = (() => {
     trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
 
-  const isDemo3On = process.env.IS_DEMO3_ONGOING === 'yes';
+  // const isDemo3On = process.env.IS_DEMO3_ONGOING === 'yes';
 
   const configuration = setConfig(pack, {
     dependencies: {
       MDEPLOY: {
         url: `${edgeEngineUrl}/${edgeEngineProjectId}${edgeEngineMdeployEndpoint}`,
         audience: process.env.MDEPLOY_AUDIENCE,
+      },
+      MESS: {
+        url: `${edgeEngineUrl}/${edgeEngineProjectId}${edgeEngineMessEndpoint}`,
+        audience: process.env.MESS_AUDIENCE,
       },
       EDGEDAEMON: {
         url: process.env.EDGEDAEMON_URL,
@@ -90,10 +96,10 @@ module.exports = (() => {
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
       anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8299,
       demo3: {
-        isOn: isDemo3On,
-        systemToken: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
-        appIpAddress: isDemo3On ? process.env.APP_IP_ADDRESS : '192.168.68.119',
-        gatewayNodeIpAddress: isDemo3On ? process.env.GATEWAY_NODE_IP_ADDRESS: '192.168.68.102',
+        // isOn: isDemo3On,/
+        // systemToken: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
+        // appIpAddress: isDemo3On ? process.env.APP_IP_ADDRESS : '192.168.68.119',
+        // gatewayNodeIpAddress: isDemo3On ? process.env.GATEWAY_NODE_IP_ADDRESS : '192.168.68.102',
       },
     },
   });
