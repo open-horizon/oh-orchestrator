@@ -3,14 +3,13 @@ const fs = require('fs-extra');
 const { fetchActiveAgreements } = require('../external/anaxRequests');
 
 const { postFile } = require('../external/messRequests');
+const { getCurrentNode } = require('../external/jsonRPCRequests');
 
 const {
   getObjectsByType,
   downloadObjectFile,
-  // markObjectReceived,
+  markObjectReceived,
 } = require('../external/essRequests');
-
-// const { deployModelToApp } = require('./demoHelper');
 
 const {
   hzn: {
@@ -23,20 +22,19 @@ const {
   },
   essObjectsStorageDir,
   essObjectsPollingInterval,
-  // demo3: {
-  // isOn: isDemo3On,
-  // },
 } = require('../configuration/config');
+
+let previousDeployment = 0;
 
 const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => getObjectsByType(nodeId, agreementId, objectType, correlationId)
   .then((objectsResponse) => {
-    // console.log('===> ', );
     console.log('===> pollingForObjectType', { nodeId, agreementId, objectType });
     if (!objectsResponse || !Array.isArray(objectsResponse)) return;
 
     objectsResponse.forEach((object) => {
       const {
         objectID: objectId,
+        activationTime,
         destinationPolicy: {
           properties: objectProperties,
         },
@@ -48,42 +46,45 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           && property.value === gatewayDeploymentPropertyValue,
       );
 
-      if (isGatewayDeployment) return;
+      getCurrentNode()
+        .then((gatewayNode) => {
+          const outputFileDir = `${essObjectsStorageDir}/${nodeId}/${agreementId}`;
+          const outputFilePath = `${outputFileDir}/${objectType}_${objectId}`;
 
-      const outputFileDir = `${essObjectsStorageDir}/${nodeId}/${agreementId}`;
-      const outputFilePath = `${outputFileDir}/${objectType}_${objectId}`;
+          const destinationNodeId = isGatewayDeployment ? gatewayNode.nodeId : nodeId;
 
-      fs.ensureDir(outputFileDir)
-        .then(() => downloadObjectFile(nodeId, agreementId, objectType, objectId, outputFilePath, correlationId))
+          return fs.ensureDir(outputFileDir)
+            .then(() => downloadObjectFile(nodeId, agreementId, objectType, objectId, outputFilePath, correlationId))
+            .then((data) => {
+              console.log('===> downloadObjectFile success');
+              return data;
+            })
+            .catch((error) => {
+              console.log('===> downloadObjectFile error', error);
+              throw error;
+            })
+            .then(() => {
+              console.log('===> here', { activationTime, previousDeployment, destinationNodeId });
+
+              previousDeployment = activationTime;
+              return postFile(destinationNodeId, objectType, objectId, outputFilePath, correlationId)
+                .then((data) => {
+                  console.log('===> postFile success', data);
+                  return data;
+                })
+                .catch((error) => {
+                  console.log('===> postFile error', error);
+                });
+            })
+        })
+        .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
         .then((data) => {
-          console.log('===> downloadObjectFile success', data);
+          console.log('===> markObjectReceived success', data);
           return data;
         })
         .catch((error) => {
-          console.log('===> downloadObjectFile error', error);
-          throw error;
-        })
-        .then(() => postFile(nodeId, objectType, objectId, outputFilePath, correlationId))
-        .then((data) => {
-          console.log('===> postFile success', data);
-          return data;
-        })
-        .catch((error) => {
-          console.log('===> postFile error', error);
-          throw error;
+          console.log('===> markObjectReceived error', error);
         });
-      // .then((mcdnFileProp) => {
-      //   if (isDemo3On) return deployModelToApp(mcdnFileProp);
-      //   return undefined;
-      // })
-      // .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
-      // .then((data) => {
-      //   console.log('===> markObjectReceived success', data);
-      //   return data;
-      // })
-      // .catch((error) => {
-      //   console.log('===> markObjectReceived error', error);
-      // });
     });
   })
   .catch(() => { });
