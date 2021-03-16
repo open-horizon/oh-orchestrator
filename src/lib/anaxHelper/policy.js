@@ -2,11 +2,7 @@ const fs = require('fs-extra');
 
 const { getRichError } = require('@bananabread/response-helper');
 
-const {
-  hzn: {
-    nodePoliciesDir,
-  },
-} = require('../../configuration/config');
+const { nodePoliciesDir } = require('../../configuration/config');
 
 const getPolicyFilePath = (nodeId) => `${nodePoliciesDir}/policy_${nodeId}.json`;
 

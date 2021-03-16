@@ -27,5 +27,7 @@
 	"HZN_EXCHANGE_URL": "http://localhost:3090/v1/",
 	"HZN_CSS_URL": "http://localhost:9443",
 	"HZN_EXCHANGE_USER_AUTH": "--horizon-exchange-user-auth-(username:password)--",
+	"HZN_ESS_TRACKED_OBJECT_TYPES": "--horizon-ess-object-types-to-sync--",
+	"NODE_TLS_REJECT_UNAUTHORIZED": "0", // In order to use self signed ess certificates
 	"NODE_ENV": "local"
 }

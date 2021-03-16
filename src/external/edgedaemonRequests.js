@@ -22,6 +22,9 @@ const getNodes = (correlationId) => {
     .then((res) => res.data);
 };
 
+const findNode = (nodeId, correlationId) => getNodes(correlationId)
+  .then((nodes) => nodes.find((node) => node.id === nodeId));
+
 const createNode = (id, dockerSocketPath, correlationId) => {
   const rpOptions = {
     method: 'POST',
@@ -36,9 +39,6 @@ const createNode = (id, dockerSocketPath, correlationId) => {
     json: true,
   };
   return rpAuth('EDGEDAEMON', rpOptions)
-    .catch((err) => {
-      throw getRichError('System', 'Failed to create node in edgedaemon', { id, dockerSocketPath }, err, 'error', correlationId);
-    })
     .then((res) => res.data);
 };
 
@@ -59,7 +59,7 @@ const deleteNode = (id, correlationId) => {
 };
 
 module.exports = {
-  getNodes,
+  findNode,
   createNode,
   deleteNode,
 };

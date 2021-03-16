@@ -15,8 +15,8 @@ const {
     exchangeUserAuth,
     orgId,
     defaultNodeToken,
-    anaxStorageBasePathDir,
   },
+  anaxContainersStorageDir,
 } = require('../../configuration/config');
 const {
   scriptFileValues,
@@ -117,7 +117,7 @@ const undeployAnaxNode = (nodeId, nodePort, correlationId) => {
       HZN_FSS_CSSURL: cssUrl,
       ANAX_NODE_ID: nodeId,
       ANAX_NODE_PORT: nodePort,
-      ANAX_STORAGE_BASE_PATH: anaxStorageBasePathDir,
+      ANAX_STORAGE_BASE_PATH: anaxContainersStorageDir,
       HORIZON_URL: `http://localhost:${nodePort}`,
     },
     correlationId,
@@ -145,7 +145,7 @@ const deployAnaxNode = (nodeId, nodePort, dockerSocketFilePath, correlationId) =
       HZN_FSS_CSSURL: cssUrl,
       ANAX_NODE_ID: nodeId,
       ANAX_NODE_PORT: nodePort,
-      ANAX_STORAGE_BASE_PATH: anaxStorageBasePathDir,
+      ANAX_STORAGE_BASE_PATH: anaxContainersStorageDir,
       HORIZON_URL: `http://localhost:${nodePort}`, // test only
       DOCKER_SOCKET: dockerSocketFilePath,
     },

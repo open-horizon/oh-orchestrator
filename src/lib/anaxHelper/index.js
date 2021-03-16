@@ -3,6 +3,7 @@ const getPort = require('get-port');
 
 const { updateAnaxState } = require('../../models/nodeModel');
 const {
+  findNode,
   createNode,
   deleteNode,
 } = require('../../external/edgedaemonRequests');
@@ -18,6 +19,7 @@ const {
   gatewayNodeIdsPortsMap,
   mdeployStatusValues,
   anaxStatusValues,
+  shortenNodeId,
 } = require('../../util/nodeUtil');
 
 const {
@@ -44,7 +46,7 @@ const deployAndRegisterAnaxNode = (nodeId, nodePort, nodeProperties, customDocke
   }
 
   deployRequests[nodeId] = true;
-  const shortenedNodeId = nodeId.substr(0, 16); // Anax does not support large nodeIds, left some space for flags
+  const shortenedNodeId = shortenNodeId(nodeId); // Anax does not support large nodeIds, left some space for flags
 
   return createPolicyFile(nodeId, nodeProperties)
     .then((policyFilePath) => deployAnaxNode(shortenedNodeId, nodePort, customDockerSocketPath, correlationId)
@@ -82,7 +84,7 @@ const initializeGatewayNodes = () => {
 const initializeAnaxNodeForEdgeNode = (node, correlationId) => {
   if (node.mdeployStatus !== mdeployStatusValues.ACTIVE
     || (node.anaxState && node.anaxState.status === anaxStatusValues.CONFIGURED)
-    || node.isGatewayNode) return Promise.resolve();
+    || node.isGatewayNode) return Promise.resolve(false);
 
   const nodeProperties = [...node.attributes, ...node.characteristics];
   nodeProperties.push({
@@ -92,7 +94,12 @@ const initializeAnaxNodeForEdgeNode = (node, correlationId) => {
 
   return getPort({ port: getPort.makeRange(anaxContainersPortNumStart, anaxContainersPortNumEnd) })
     .then((availableNodePort) => createNode(node.id, dockerSocketPath, correlationId)
-      .then(({ edgeSocketPath }) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, edgeSocketPath, true, correlationId)));
+      .catch((error) => {
+        if (error.statusCode === 409) return findNode(node.id, correlationId);
+        throw error;
+      })
+      .then(({ edgeSocketPath }) => deployAndRegisterAnaxNode(node.id, availableNodePort, nodeProperties, edgeSocketPath, true, correlationId)))
+    .then(() => true);
 };
 
 const terminateAnaxNodeForEdgeNode = (node, correlationId) => {

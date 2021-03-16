@@ -21,7 +21,7 @@ lib-cov
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+build
 coverage
 
 # Dependency directories

@@ -165,9 +165,9 @@ start() {
 
 	# setup directories for file sync service
 	if isMacos; then
-		fssBasePath=${ANAX_STORAGE_BASE_PATH:-'/private/var/tmp/oh/storage'}
+		fssBasePath=${ANAX_STORAGE_BASE_PATH:-'/private/var/tmp/oh/anaxStorage'}
 	else
-		fssBasePath=${ANAX_STORAGE_BASE_PATH:-'/var/tmp/oh/storage'}
+		fssBasePath=${ANAX_STORAGE_BASE_PATH:-'/var/tmp/oh/anaxStorage'}
 	fi
 
 	# set this base path to 777 to allow other users create directories under it
