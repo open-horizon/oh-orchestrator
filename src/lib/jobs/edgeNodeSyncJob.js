@@ -126,7 +126,7 @@ const start = () => getClient()
   })
   .then(() => {
     syncNodes();
-    // setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
+    setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
   });
 
 module.exports = {

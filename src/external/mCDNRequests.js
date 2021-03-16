@@ -6,9 +6,6 @@ const {
   edgeEngine: {
     projectId,
   },
-  demo3: {
-    gatewayNodeIpAddress,
-  },
 } = require('../configuration/config');
 
 const mCDNURL = `http://${gatewayNodeIpAddress}:8083/${projectId}/mcdn/v1`;

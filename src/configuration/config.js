@@ -47,8 +47,6 @@ module.exports = (() => {
     trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
 
-  // const isDemo3On = process.env.IS_DEMO3_ONGOING === 'yes';
-
   const configuration = setConfig(pack, {
     dependencies: {
       MDEPLOY: {
@@ -90,12 +88,6 @@ module.exports = (() => {
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
       anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8299,
-      demo3: {
-        // isOn: isDemo3On,/
-        // systemToken: isDemo3On ? process.env.DEMO3_SYSTEM_TOKEN : '',
-        // appIpAddress: isDemo3On ? process.env.APP_IP_ADDRESS : '192.168.68.119',
-        // gatewayNodeIpAddress: isDemo3On ? process.env.GATEWAY_NODE_IP_ADDRESS : '192.168.68.102',
-      },
     },
   });
 

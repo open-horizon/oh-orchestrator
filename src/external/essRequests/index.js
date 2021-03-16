@@ -52,9 +52,6 @@ const establishObectTypeWebhook = (nodeId, agreementId, objectType, receiverUrl,
       }),
     };
 
-    // TODO Remove test
-    // const test = { headers: { Authorization: `Basic ${Buffer.from('admin:password').toString('base64')}` } };
-
     const completeRequest = { ...request, ...requestData };
     return dataRequest(nodeId, completeRequest, correlationId);
   });
