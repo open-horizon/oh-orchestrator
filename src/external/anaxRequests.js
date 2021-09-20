@@ -1,6 +1,6 @@
 const rp = require('request-promise');
 
-const fetchActiveAgreements = (containerPort, correlationId) => rp({
+const fetchActiveAgreements = (containerPort) => rp({
   uri: `http://localhost:${containerPort}/agreement`,
 })
   .then((response) => {

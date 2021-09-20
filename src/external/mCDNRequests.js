@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 
 const {
   mcdnAuthToken,
+  gatewayNodeIpAddress,
   edgeEngine: {
     projectId,
   },
@@ -11,7 +12,7 @@ const {
 const mCDNURL = `http://${gatewayNodeIpAddress}:8083/${projectId}/mcdn/v1`;
 const MCDN_FILES_ENDPOINT = `${mCDNURL}/files`;
 
-const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
+const postFile = (nodeId, pathName, fileName, localFilePath) => {
   const mCDNFilePath = `${MCDN_FILES_ENDPOINT}/${pathName}/${fileName}`;
 
   return rp({
