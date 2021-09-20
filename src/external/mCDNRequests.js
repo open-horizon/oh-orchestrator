@@ -3,7 +3,11 @@ const fs = require('fs-extra');
 
 const {
   mcdnAuthToken,
-  gatewayNodeIpAddress,
+  hzn: {
+    ess: {
+      gatewayNodeIpAddress,
+    },
+  },
   edgeEngine: {
     projectId,
   },
