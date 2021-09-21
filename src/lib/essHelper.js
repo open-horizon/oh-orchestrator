@@ -75,7 +75,7 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
                 .catch((error) => {
                   console.log('===> postFile error', error);
                 });
-            })
+            });
         })
         .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
         .then((data) => {

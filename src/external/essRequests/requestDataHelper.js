@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const { anaxContainersStorageDir } = require('../../configuration/config');
 const { shortenNodeId } = require('../../util/nodeUtil');
 
-const getRequestData = (nodeId, agreementId, correlationId) => Promise.resolve()
+const getRequestData = (nodeId, agreementId) => Promise.resolve()
   .then(() => {
     const authDataPromises = [];
 

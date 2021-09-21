@@ -1,3 +1,19 @@
+# local
+server-start.sh
+server-test.json
+build/*
+local/start.json
+local/testStart.json
+package-lock.json
+test/.testConfig.json
+temp
+mochawesome-report
+api
+
+# Ignored nodejs related dot files
+.eslintrc
+.nycrc
+
 # Logs
 logs
 *.log
@@ -21,7 +37,7 @@ lib-cov
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build
+build/Release
 coverage
 
 # Dependency directories
@@ -62,15 +78,3 @@ data/
 
 # backup
 backup/
-
-package-lock.json
-mochawesome-report
-api
-temp
-
-server-start.sh
-local/start.json
-local/testStart.json
-server-test.json
-
-~*

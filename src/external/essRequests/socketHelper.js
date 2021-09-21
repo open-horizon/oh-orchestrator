@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const https = require('https');
 const fs = require('fs-extra');
 
-const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, reject) => {
+const dataRequest = (nodeId, request) => new Promise((resolve, reject) => {
   console.log('===> in dataRequest');
   console.log('===> nodeId', nodeId);
 
@@ -43,7 +43,7 @@ const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, re
   clientRequest.end();
 });
 
-const fileDownloadRequest = (nodeId, outputFilePath, request, correlationId) => new Promise((resolve, reject) => {
+const fileDownloadRequest = (nodeId, outputFilePath, request) => new Promise((resolve, reject) => {
   const dest = fs.createWriteStream(outputFilePath);
 
   const callback = (res) => {

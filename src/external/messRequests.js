@@ -34,7 +34,7 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
     json: true,
   })
     .catch(() => {
-      
+
     })
     .catch((error) => {
       console.log('===> error posting object metadata', error);

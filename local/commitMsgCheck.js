@@ -1,3 +1,3 @@
-const { commitCheckMsg } = require('@bananabread/git-hooks');
+const { commitCheckMsg } = require('@bananabread/local');
 
 commitCheckMsg();
