@@ -17,11 +17,7 @@ const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, re
     });
 
     res.on('error', (error) => {
-<<<<<<< HEAD
       reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
-=======
-      reject(new Error(`Received error from ESS socket, error: ${error}`));
->>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
     });
 
     res.on('close', () => {
@@ -39,10 +35,6 @@ const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, re
         code: res.statusCode,
         message: res.statusMessage,
       };
-<<<<<<< HEAD
-=======
-
->>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
       resolve(result);
     });
   };
@@ -61,11 +53,7 @@ const fileDownloadRequest = (nodeId, outputFilePath, request) => new Promise((re
     });
 
     res.on('error', (error) => {
-<<<<<<< HEAD
       reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
-=======
-      reject(new Error(`Received error from ESS socket, error: ${error}`));
->>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
     });
 
     res.on('close', () => {
