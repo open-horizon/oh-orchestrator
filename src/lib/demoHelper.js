@@ -38,17 +38,14 @@ const deployModelToApp = (mcdnFileProp) => {
     },
     json: true,
   })).delay(5000)
-    .then((res) => {
-      console.log('mModelShare Deployed =======>', res.data);
-      return rp({
-        uri: `${mCDNURL}/files/${pathName}/${fileName}`,
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${mcdnAuthToken}`,
-        },
-        json: true,
-      });
-    });
+    .then(() => rp({
+      uri: `${mCDNURL}/files/${pathName}/${fileName}`,
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${mcdnAuthToken}`,
+      },
+      json: true,
+    }));
 };
 
 module.exports = {
