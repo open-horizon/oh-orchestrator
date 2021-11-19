@@ -1,4 +1,0 @@
-{
-  "exclude": ["gulpfile.js"],
-  "reporter": ["lcov", "text"]
-}

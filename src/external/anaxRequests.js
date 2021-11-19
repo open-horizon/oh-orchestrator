@@ -15,7 +15,6 @@ const fetchActiveAgreements = (containerPort, correlationId) => rp({
     catch (error) {
       throw getRichError('System', 'Error occured while parsing response from Anax', { containerPort }, error, 'error', correlationId);
     }
-
     if (!parsedResponse.agreements) return [];
     return parsedResponse.agreements.active;
   })

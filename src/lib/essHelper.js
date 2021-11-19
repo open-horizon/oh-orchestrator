@@ -4,11 +4,19 @@ const logger = require('@bananabread/sumologic-winston-logger');
 const { getRichError } = require('@bananabread/response-helper');
 
 const { postFile } = require('../external/messRequests');
+<<<<<<< HEAD
 const { fetchActiveAgreements } = require('../external/anaxRequests');
+=======
+const { getCurrentNode } = require('../external/jsonRPCRequests');
+>>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
 
 const {
   getObjectsByType,
   downloadObjectFile,
+<<<<<<< HEAD
+=======
+  markObjectReceived,
+>>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
 } = require('../external/essRequests');
 
 const {
@@ -24,14 +32,21 @@ const {
   essObjectsPollingInterval,
 } = require('../configuration/config');
 
+let previousDeployment = 0;
+
 const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => getObjectsByType(nodeId, agreementId, objectType, correlationId)
   .then((objectsResponse) => {
+<<<<<<< HEAD
     logger.info('Polling for object by type', { nodeId, agreementId, objectType }, correlationId);
+=======
+    console.log('===> pollingForObjectType', { nodeId, agreementId, objectType });
+>>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
     if (!objectsResponse || !Array.isArray(objectsResponse)) return;
 
     objectsResponse.forEach((object) => {
       const {
         objectID: objectId,
+        activationTime,
         destinationPolicy: {
           properties: objectProperties,
         },
@@ -43,19 +58,44 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           && property.value === gatewayDeploymentPropertyValue,
       );
 
-      if (isGatewayDeployment) return;
+      getCurrentNode()
+        .then((gatewayNode) => {
+          const outputFileDir = `${essObjectsStorageDir}/${nodeId}/${agreementId}`;
+          const outputFilePath = `${outputFileDir}/${objectType}_${objectId}`;
 
-      const outputFileDir = `${essObjectsStorageDir}/${nodeId}/${agreementId}`;
-      const outputFilePath = `${outputFileDir}/${objectType}_${objectId}`;
+          const destinationNodeId = isGatewayDeployment ? gatewayNode.nodeId : nodeId;
 
-      fs.ensureDir(outputFileDir)
-        .then(() => downloadObjectFile(nodeId, agreementId, objectType, objectId, outputFilePath, correlationId))
-        .catch((error) => {
-          throw getRichError('System', 'Error occured while downloading object file', null, error, 'error', correlationId);
+          return fs.ensureDir(outputFileDir)
+            .then(() => downloadObjectFile(nodeId, agreementId, objectType, objectId, outputFilePath, correlationId))
+            .then((data) => {
+              console.log('===> downloadObjectFile success');
+              return data;
+            })
+            .catch((error) => {
+              console.log('===> downloadObjectFile error', error);
+              throw error;
+            })
+            .then(() => {
+              console.log('===> here', { activationTime, previousDeployment, destinationNodeId });
+
+              previousDeployment = activationTime;
+              return postFile(destinationNodeId, objectType, objectId, outputFilePath, correlationId)
+                .then((data) => {
+                  console.log('===> postFile success', data);
+                  return data;
+                })
+                .catch((error) => {
+                  console.log('===> postFile error', error);
+                });
+            });
         })
-        .then(() => postFile(nodeId, objectType, objectId, outputFilePath, correlationId))
+        .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
+        .then((data) => {
+          console.log('===> markObjectReceived success', data);
+          return data;
+        })
         .catch((error) => {
-          throw getRichError('System', 'Error occured while posting object file', null, error, 'error', correlationId);
+          console.log('===> markObjectReceived error', error);
         });
     });
   })

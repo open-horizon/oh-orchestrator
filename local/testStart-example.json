@@ -1,0 +1,8 @@
+{
+  // -- test
+  // "MST_URL": "http://localhost:8025/mST/v1", // required if USE_MOCK_PROFILES == "no"
+  // "MST_TOKEN": "password", // required if USE_MOCK_PROFILES == "no"
+  // "CUSTOMER_NAME": "H2P", // required if USE_MOCK_PROFILES == "no"
+  "TEST_DETACHED_INSTANCE": "no",
+  "USE_MOCK_PROFILES": "yes"
+}
