@@ -4,19 +4,11 @@ const logger = require('@bananabread/sumologic-winston-logger');
 const { getRichError } = require('@bananabread/response-helper');
 
 const { postFile } = require('../external/messRequests');
-<<<<<<< HEAD
 const { fetchActiveAgreements } = require('../external/anaxRequests');
-=======
-const { getCurrentNode } = require('../external/jsonRPCRequests');
->>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
 
 const {
   getObjectsByType,
   downloadObjectFile,
-<<<<<<< HEAD
-=======
-  markObjectReceived,
->>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
 } = require('../external/essRequests');
 
 const {
@@ -36,11 +28,7 @@ let previousDeployment = 0;
 
 const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => getObjectsByType(nodeId, agreementId, objectType, correlationId)
   .then((objectsResponse) => {
-<<<<<<< HEAD
     logger.info('Polling for object by type', { nodeId, agreementId, objectType }, correlationId);
-=======
-    console.log('===> pollingForObjectType', { nodeId, agreementId, objectType });
->>>>>>> 9f20540672076bbb5e27feafad0401b9a38fb699
     if (!objectsResponse || !Array.isArray(objectsResponse)) return;
 
     objectsResponse.forEach((object) => {
