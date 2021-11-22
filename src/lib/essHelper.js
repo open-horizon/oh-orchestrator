@@ -1,14 +1,14 @@
 const fs = require('fs-extra');
 
-const { fetchActiveAgreements } = require('../external/anaxRequests');
+const logger = require('@bananabread/sumologic-winston-logger');
+const { getRichError } = require('@bananabread/response-helper');
 
 const { postFile } = require('../external/messRequests');
-const { getCurrentNode } = require('../external/jsonRPCRequests');
+const { fetchActiveAgreements } = require('../external/anaxRequests');
 
 const {
   getObjectsByType,
   downloadObjectFile,
-  markObjectReceived,
 } = require('../external/essRequests');
 
 const {
@@ -28,7 +28,7 @@ let previousDeployment = 0;
 
 const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => getObjectsByType(nodeId, agreementId, objectType, correlationId)
   .then((objectsResponse) => {
-    console.log('===> pollingForObjectType', { nodeId, agreementId, objectType });
+    logger.info('Polling for object by type', { nodeId, agreementId, objectType }, correlationId);
     if (!objectsResponse || !Array.isArray(objectsResponse)) return;
 
     objectsResponse.forEach((object) => {
@@ -90,18 +90,20 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
   .catch(() => { });
 
 const initializePolling = (node, correlationId) => {
-  console.log('===> Initializing Polling', { node });
   const { id: nodeId } = node;
+
+  logger.info('Initializing polling', { nodeId }, correlationId);
+
   setInterval(() => {
-    console.log('===> Polling', { node });
+    logger.info('Polling', { nodeId }, correlationId);
     if (!node.anaxState || !node.anaxState.nodePort) return;
 
-    console.log('===> fetching agreements');
+    logger.info('Fetching agreements', { nodeId }, correlationId);
     fetchActiveAgreements(node.anaxState.nodePort, correlationId)
       .then((activeAgreements) => {
         activeAgreements.forEach((activeAgreement) => {
           const { current_agreement_id: agreementId } = activeAgreement;
-          console.log('===> fetched agreement', { agreementId });
+          logger.info('Agreements fetched', { nodeId }, correlationId);
 
           trackedObjectTypes.forEach((objectType) => {
             pollForObjectByType(nodeId, agreementId, objectType, correlationId);

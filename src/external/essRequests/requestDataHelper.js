@@ -1,6 +1,9 @@
 const Promise = require('bluebird');
 const fs = require('fs-extra');
 
+const logger = require('@bananabread/sumologic-winston-logger');
+const { getRichError } = require('@bananabread/response-helper');
+
 const { anaxContainersStorageDir } = require('../../configuration/config');
 const { shortenNodeId } = require('../../util/nodeUtil');
 
@@ -13,28 +16,32 @@ const getRequestData = (nodeId, agreementId) => Promise.resolve()
     const essSocketFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/fss-domain-socket/essapi.sock`;
     const authKeyFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/ess-auth/${agreementId}/auth.json`;
 
-    console.log('===> files', {
-      certFilePath,
-      essSocketFilePath,
-      authKeyFilePath,
-    });
+    logger.debug(
+      'Configured request files',
+      {
+        certFilePath,
+        essSocketFilePath,
+        authKeyFilePath,
+      },
+      correlationId,
+    );
 
     authDataPromises.push(fs.access(essSocketFilePath)
       .then(() => essSocketFilePath)
       .catch((err) => {
-        throw new Error(`Failed to find/access to socketPath for nodeId, error: ${err}`);
+        throw getRichError('System', 'Failed to find/access to socketPath for nodeId', { nodeId, essSocketFilePath }, err, 'error', correlationId);
       }));
 
     authDataPromises.push(fs.readJSON(authKeyFilePath)
       .catch((err) => {
-        throw new Error(`ESS Auth key file cannot be read, error: ${err}`);
+        throw getRichError('System', 'ESS Auth key file cannot be read', { nodeId, authKeyFilePath, correlationId }, err, 'error', correlationId);
       })
       .then(({ id, token }) => Buffer.from(`${id}:${token}`).toString('base64')));
 
     authDataPromises.push(fs.readFile(certFilePath)
       .then((content) => {
         if (!content) {
-          throw new Error('ESS Cert file does not contain anything');
+          throw getRichError('System', 'ESS Cert file does not contain anything', { nodeId, certFilePath, correlationId }, null, 'error', correlationId);
         }
 
         let fetchedCert;
@@ -43,7 +50,7 @@ const getRequestData = (nodeId, agreementId) => Promise.resolve()
           return fetchedCert;
         }
         catch (err) {
-          throw new Error(`ESS Cert file content cannot be  converted to string, error: ${err}`);
+          throw getRichError('System', 'ESS Cert file content cannot be  converted to string', { nodeId, certFilePath, correlationId }, err, 'error', correlationId);
         }
       }));
 

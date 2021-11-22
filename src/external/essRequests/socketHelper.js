@@ -2,9 +2,11 @@ const Promise = require('bluebird');
 const https = require('https');
 const fs = require('fs-extra');
 
-const dataRequest = (nodeId, request) => new Promise((resolve, reject) => {
-  console.log('===> in dataRequest');
-  console.log('===> nodeId', nodeId);
+const logger = require('@bananabread/sumologic-winston-logger');
+const { getRichError } = require('@bananabread/response-helper');
+
+const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, reject) => {
+  logger.info('Sending data request', { nodeId, request }, correlationId);
 
   const callback = (res) => {
     let allData = '';
@@ -15,7 +17,7 @@ const dataRequest = (nodeId, request) => new Promise((resolve, reject) => {
     });
 
     res.on('error', (error) => {
-      reject(new Error(`Received error from ESS socket, error: ${error}`));
+      reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
     });
 
     res.on('close', () => {
@@ -33,7 +35,6 @@ const dataRequest = (nodeId, request) => new Promise((resolve, reject) => {
         code: res.statusCode,
         message: res.statusMessage,
       };
-
       resolve(result);
     });
   };
@@ -52,7 +53,7 @@ const fileDownloadRequest = (nodeId, outputFilePath, request) => new Promise((re
     });
 
     res.on('error', (error) => {
-      reject(new Error(`Received error from ESS socket, error: ${error}`));
+      reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
     });
 
     res.on('close', () => {
