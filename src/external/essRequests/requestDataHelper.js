@@ -7,7 +7,7 @@ const { getRichError } = require('@bananabread/response-helper');
 const { anaxContainersStorageDir } = require('../../configuration/config');
 const { shortenNodeId } = require('../../util/nodeUtil');
 
-const getRequestData = (nodeId, agreementId) => Promise.resolve()
+const getRequestData = (nodeId, agreementId, correlationId) => Promise.resolve()
   .then(() => {
     const authDataPromises = [];
 

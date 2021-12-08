@@ -14,9 +14,11 @@ const pack = require('../../package.json');
  * | EDGE_ENGINE_URL | Url for the edgeEngine (gateway) | http://localhost:8083 |
  * | EDGE_ENGINE_PROJECT_ID | mimik developer project id | | should be same for mdeploy
  * | EDGE_ENGINE_MDEPLOY_ENDPOINT | mdeploy endpoint | /mdeploy/v1 |
- * | MDEPLOY_AUDIENCE | mdeploy audience | |
+ * | EDGE_ENGINE_MESS_ENDPOINT | mESS endpoint | /mess/v1 |
  * | EDGEDAEMON_URL | edgeDaemon endpoint | |
- * | EDGEDAEMON_AUDIENCE | edgeDaemon audience | |
+ * | MESS_APIKEY | apiKey to use to reach mESS | |
+ * | MDEPLOY_APIKEY | apiKey to use to reach mdeploy | |
+ * | EDGEDAEMON_APIKEY | apiKey to use to reach edgedeamon | |
  * | HZN_ORG_ID | Hzn organization id to be used for registering anax nodes | myorg |
  * | HZN_CSS_URL | Hzn CSS Url | | example: http://192.168.1.77:9443
  * | HZN_EXCHANGE_URL | Hzn Exchange Url | | example: http://192.168.1.77:3090/v1/
@@ -49,6 +51,7 @@ module.exports = (() => {
   const edgeEngineProjectId = process.env.EDGE_ENGINE_PROJECT_ID;
 
   const edgeEngineMdeployEndpoint = process.env.EDGE_ENGINE_MDEPLOY_ENDPOINT || '/mdeploy/v1';
+  const edgeEngineMESSEndpoint = process.env.EDGE_ENGINE_MESS_ENDPOINT || '/mess/v1';
 
   const trackedObjectTypesStr = process.env.ESS_TRACKED_OBJECT_TYPES;
   let trackedObjectTypes;
@@ -60,11 +63,15 @@ module.exports = (() => {
     dependencies: {
       MDEPLOY: {
         url: `${edgeEngineUrl}/${edgeEngineProjectId}${edgeEngineMdeployEndpoint}`,
-        audience: process.env.MDEPLOY_AUDIENCE,
+        apiKey: process.env.MDEPLOY_APIKEY,
       },
       EDGEDAEMON: {
         url: process.env.EDGEDAEMON_URL,
-        audience: process.env.EDGEDAEMON_AUDIENCE,
+        apiKey: process.env.EDGEDAEMON_APIKEY,
+      },
+      MESS: {
+        url: `${edgeEngineUrl}/${edgeEngineProjectId}${edgeEngineMESSEndpoint}`,
+        apiKey: process.env.MESS_APIKEY,
       },
     },
     custom: {
@@ -87,6 +94,7 @@ module.exports = (() => {
         url: edgeEngineUrl,
         projectId: edgeEngineProjectId,
         mdeployEndpoint: edgeEngineMdeployEndpoint,
+        mESSEndpoint: edgeEngineMESSEndpoint,
       },
       mcdnAuthToken: process.env.MCDN_AUTH_TOKEN || '1234',
       dockerSocketPath: process.env.DOCKER_SOCKET_PATH || '/var/run/docker.sock',

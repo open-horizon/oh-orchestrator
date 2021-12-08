@@ -1,19 +1,21 @@
-const rp = require('request-promise');
+const { rpRetry } = require('@bananabread/request-retry');
 
 const config = require('../configuration/config');
 
 const jsonRPCUrl = `${config.edgeEngine.url}/jsonrpc/v1`;
 
-const getCurrentNode = () => rp({
-  url: jsonRPCUrl,
+const getCurrentNode = (correlationId) => rpRetry({
   method: 'POST',
-  body: {
+  headers: {
+    'x-correlation-id': correlationId,
+  },
+  data: {
     jsonrpc: '2.0',
     method: 'getMe',
     params: [''],
     id: 1,
   },
-  json: true,
+  url: jsonRPCUrl,
 })
   .then((response) => response.result);
 

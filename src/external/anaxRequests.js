@@ -1,22 +1,16 @@
-const rp = require('request-promise');
-
+const { rpRetry } = require('@bananabread/request-retry');
 const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
 
-const fetchActiveAgreements = (containerPort, correlationId) => rp({
-  uri: `http://localhost:${containerPort}/agreement`,
+const fetchActiveAgreements = (containerPort, correlationId) => rpRetry({
+  method: 'GET',
+  headers: {
+    'x-correlation-id': correlationId,
+  },
+  url: `http://localhost:${containerPort}/agreement`,
 })
   .then((response) => {
-    let parsedResponse = {};
-
-    try {
-      parsedResponse = JSON.parse(response);
-    }
-    catch (error) {
-      throw getRichError('System', 'Error occured while parsing response from Anax', { containerPort }, error, 'error', correlationId);
-    }
-    if (!parsedResponse.agreements) return [];
-    return parsedResponse.agreements.active;
+    if (!response.agreements) return [];
+    return response.agreements.active;
   })
   .catch((error) => {
     logger.error('Error occured while fetching agreements', { error }, correlationId);

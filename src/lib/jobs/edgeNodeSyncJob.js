@@ -69,8 +69,9 @@ const processNode = (discoveredNode, correlationId) => {
 
 const syncNodes = () => {
   const correlationId = getCorrelationId();
+
   logger.debug('Starting edgeNodeSyncJob', { correlationId });
-  return getCurrentNode()
+  return getCurrentNode(correlationId)
     .then((gatewayNode) => getNodes(correlationId)
       .then((foundNodes) => getClientForExternalNode(foundNodes.map((foundNode) => foundNode.id), correlationId)
         .catch((error) => {

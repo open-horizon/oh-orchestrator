@@ -1,10 +1,11 @@
 const fs = require('fs-extra');
 
 const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
 
 const { postFile } = require('../external/messRequests');
+const { markObjectReceived } = require('../external/essRequests');
 const { fetchActiveAgreements } = require('../external/anaxRequests');
+const { getCurrentNode } = require('../external/jsonRPCRequests');
 
 const {
   getObjectsByType,
@@ -46,7 +47,7 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           && property.value === gatewayDeploymentPropertyValue,
       );
 
-      getCurrentNode()
+      getCurrentNode(correlationId)
         .then((gatewayNode) => {
           const outputFileDir = `${essObjectsStorageDir}/${nodeId}/${agreementId}`;
           const outputFilePath = `${outputFileDir}/${objectType}_${objectId}`;
@@ -56,34 +57,33 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
           return fs.ensureDir(outputFileDir)
             .then(() => downloadObjectFile(nodeId, agreementId, objectType, objectId, outputFilePath, correlationId))
             .then((data) => {
-              console.log('===> downloadObjectFile success');
+              logger.debug('===> downloadObjectFile success', { data }, correlationId);
               return data;
             })
             .catch((error) => {
-              console.log('===> downloadObjectFile error', error);
+              logger.error('===> downloadObjectFile error', { error }, correlationId);
               throw error;
             })
             .then(() => {
-              console.log('===> here', { activationTime, previousDeployment, destinationNodeId });
-
+              logger.debug('===> ready to post', { activationTime, previousDeployment, destinationNodeId }, correlationId);
               previousDeployment = activationTime;
               return postFile(destinationNodeId, objectType, objectId, outputFilePath, correlationId)
                 .then((data) => {
-                  console.log('===> postFile success', data);
+                  logger.debug('===> postFile success', { data }, correlationId);
                   return data;
                 })
                 .catch((error) => {
-                  console.log('===> postFile error', error);
+                  logger.error('===> postFile error', { error }, correlationId);
                 });
             });
         })
         .then(() => markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId))
         .then((data) => {
-          console.log('===> markObjectReceived success', data);
+          logger.debug('===> markObjectReceived success', { data }, correlationId);
           return data;
         })
         .catch((error) => {
-          console.log('===> markObjectReceived error', error);
+          logger.error('===> markObjectReceived error', { error }, correlationId);
         });
     });
   })

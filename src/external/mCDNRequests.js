@@ -1,4 +1,4 @@
-const rp = require('request-promise');
+const { rpRetry } = require('@bananabread/request-retry');
 const fs = require('fs-extra');
 
 const {
@@ -19,8 +19,8 @@ const MCDN_FILES_ENDPOINT = `${mCDNURL}/files`;
 const postFile = (nodeId, pathName, fileName, localFilePath) => {
   const mCDNFilePath = `${MCDN_FILES_ENDPOINT}/${pathName}/${fileName}`;
 
-  return rp({
-    uri: mCDNFilePath,
+  return rpRetry({
+    url: mCDNFilePath,
     method: 'POST',
     headers: {
       Authorization: `Bearer ${mcdnAuthToken}`,

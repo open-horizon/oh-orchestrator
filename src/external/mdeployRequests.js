@@ -1,11 +1,11 @@
-const oAuthHelper = require('@bananabread/oauth-helper');
+const { rpRetry } = require('@bananabread/request-retry');
 
 const config = require('../configuration/config');
 
 const mdeployUrl = config.dependencies.MDEPLOY.url;
-const { rpAuth: rpAuthOrig } = oAuthHelper(config);
+const { apiKey } = config.dependencies.MDEPLOY;
 
-const rpAuth = (...args) => rpAuthOrig(...args)
+const rp = (...args) => rpRetry(...args)
   .then((response) => {
     if (!response) return undefined;
 
@@ -24,41 +24,46 @@ const rpAuth = (...args) => rpAuthOrig(...args)
     return parsedResponse;
   });
 
-const healthcheck = (correlationId) => rpAuth('MDEPLOY', {
-  url: `${mdeployUrl}/healthcheck`,
+const healthcheck = (correlationId) => rp({
+  method: 'GET',
   headers: {
     'x-correlation-id': correlationId,
   },
+  url: `${mdeployUrl}/healthcheck`,
 });
 
-const getClient = (correlationId) => rpAuth('MDEPLOY', {
+const getClient = (correlationId) => rp({
+  method: 'GET',
   url: `${mdeployUrl}/clients`,
   headers: {
     'x-correlation-id': correlationId,
+    apiKey,
   },
 });
 
-const getClientForExternalNode = (externalNodeIds, correlationId) => rpAuth('MDEPLOY', {
-  url: `${mdeployUrl}/batchOps`,
+const getClientForExternalNode = (externalNodeIds, correlationId) => rp({
   method: 'POST',
   headers: {
     'x-correlation-id': correlationId,
+    apiKey,
   },
-  body: {
+  url: `${mdeployUrl}/batchOps`,
+  data: {
     nodes: externalNodeIds,
     request: {
       endpoint: '/clients',
       method: 'GET',
     },
   },
-  json: true,
 });
 
-const getNodes = (correlationId) => rpAuth('MDEPLOY', {
-  url: `${mdeployUrl}/nodes`,
+const getNodes = (correlationId) => rp({
+  method: 'GET',
   headers: {
     'x-correlation-id': correlationId,
+    apiKey,
   },
+  url: `${mdeployUrl}/nodes`,
 });
 
 const clientStatusValues = {

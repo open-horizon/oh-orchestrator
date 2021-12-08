@@ -1,27 +1,23 @@
-const rp = require('request-promise');
 const fs = require('fs-extra');
+
+const { rpRetry } = require('@bananabread/request-retry');
+const logger = require('@bananabread/sumologic-winston-logger');
 
 const config = require('../configuration/config');
 
-const {
-  edgeEngine: {
-    url: edgeEngineUrl,
-    projectId: edgeEngineProjectId,
-  },
-} = config;
-
-const messUrl = `${edgeEngineUrl}/${edgeEngineProjectId}/mess/v1`;
+const messUrl = config.dependencies.MESS.url;
+const { apiKey } = config.dependencies.MESS.apiKey;
 
 const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
-  console.log('===> postFile', { nodeId, pathName, fileName });
-
-  return rp({
-    uri: `${messUrl}/objects`,
+  logger.debug('===> postFile', { nodeId, pathName, fileName }, correlationId);
+  return rpRetry({
     method: 'POST',
     headers: {
       'x-correlation-id': correlationId,
+      apiKey,
     },
-    body: {
+    url: `${messUrl}/objects`,
+    data: {
       id: fileName,
       type: pathName,
       version: '1.0.0',
@@ -31,20 +27,18 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
         },
       ],
     },
-    json: true,
   })
-    .catch(() => {
-
-    })
     .catch((error) => {
-      console.log('===> error posting object metadata', error);
+      logger.error('===> error posting object metadata', { error }, correlationId);
     })
-    .then(() => rp({
-      uri: `${messUrl}/objects/${pathName}/${fileName}/data`,
+    .then(() => rpRetry({
       method: 'PUT',
       headers: {
         'Content-Type': 'multipart/form-data',
+        'x-correlation-id': correlationId,
+        apiKey,
       },
+      url: `${messUrl}/objects/${pathName}/${fileName}/data`,
       formData: {
         file: {
           value: fs.createReadStream(localFilePath),
@@ -55,7 +49,7 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
       },
     }))
     .catch((error) => {
-      console.log('===> error posting object DATA', error);
+      logger.error('===> error posting object DATA', { error }, correlationId);
     });
 };
 
