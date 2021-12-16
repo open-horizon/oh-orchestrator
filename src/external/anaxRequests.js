@@ -1,5 +1,5 @@
-const { rpRetry } = require('@bananabread/request-retry');
-const logger = require('@bananabread/sumologic-winston-logger');
+const { rpRetry } = require('@mimik/request-retry');
+const logger = require('@mimik/sumologic-winston-logger');
 
 const fetchActiveAgreements = (containerPort, correlationId) => rpRetry({
   method: 'GET',

@@ -1,4 +1,4 @@
-const systemInfo = require('@bananabread/systeminfo');
+const systemInfo = require('@mimik/systeminfo');
 
 const config = require('../configuration/config');
 

@@ -1,5 +1,5 @@
-const { getRichError } = require('@bananabread/response-helper');
-const { rpRetry } = require('@bananabread/request-retry');
+const { getRichError } = require('@mimik/response-helper');
+const { rpRetry } = require('@mimik/request-retry');
 
 const config = require('../configuration/config');
 

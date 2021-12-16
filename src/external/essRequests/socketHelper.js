@@ -2,8 +2,8 @@ const Promise = require('bluebird');
 const https = require('https');
 const fs = require('fs-extra');
 
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
 
 const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, reject) => {
   logger.info('Sending data request', { nodeId, request }, correlationId);

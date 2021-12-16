@@ -1,4 +1,4 @@
-const { rpRetry } = require('@bananabread/request-retry');
+const { rpRetry } = require('@mimik/request-retry');
 const fs = require('fs-extra');
 
 const {

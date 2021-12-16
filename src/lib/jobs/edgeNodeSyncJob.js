@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
 
-const { getRichError } = require('@bananabread/response-helper');
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getCorrelationId } = require('@bananabread/request-helper');
+const { getRichError } = require('@mimik/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getCorrelationId } = require('@mimik/request-helper');
 
 const { edgeNodesSyncJobInterval } = require('../../configuration/config');
 const { mdeployStatusValues } = require('../../util/nodeUtil');

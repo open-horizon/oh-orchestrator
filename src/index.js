@@ -1,4 +1,4 @@
-const init = require('@bananabread/init');
+const init = require('@mimik/init');
 const app = require('connect')();
 
 let config = require('./configuration/config');

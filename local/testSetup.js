@@ -1,3 +1,3 @@
-const { testSetup } = require('@bananabread/local');
+const { testSetup } = require('@mimik/local');
 
 testSetup();

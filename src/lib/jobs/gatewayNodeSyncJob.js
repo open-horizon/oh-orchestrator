@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 
-const { getRichError } = require('@bananabread/response-helper');
-const logger = require('@bananabread/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
 
 const { gatewayNodeSyncJobInterval } = require('../../configuration/config');
 const {

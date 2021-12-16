@@ -1,4 +1,4 @@
-const { setConfig } = require('@bananabread/configuration');
+const { setConfig } = require('@mimik/configuration');
 const pack = require('../../package.json');
 
 /**

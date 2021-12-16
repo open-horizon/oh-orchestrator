@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 
-const { getRichError } = require('@bananabread/response-helper');
+const { getRichError } = require('@mimik/response-helper');
 
 const { nodePoliciesDir } = require('../../configuration/config');
 

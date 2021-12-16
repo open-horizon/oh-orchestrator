@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 
-const logger = require('@bananabread/sumologic-winston-logger');
+const logger = require('@mimik/sumologic-winston-logger');
 
 const { postFile } = require('../external/messRequests');
 const { markObjectReceived } = require('../external/essRequests');

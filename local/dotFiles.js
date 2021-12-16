@@ -1,3 +1,3 @@
-const { dotFiles } = require('@bananabread/local');
+const { dotFiles } = require('@mimik/local');
 
 dotFiles();

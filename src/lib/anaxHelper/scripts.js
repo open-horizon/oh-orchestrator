@@ -4,8 +4,8 @@ const Promise = require('bluebird');
 const childProcess = require('child_process');
 const fs = require('fs-extra');
 
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
 
 const {
   hzn: {

@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
 const fs = require('fs-extra');
 
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
 
 const { anaxContainersStorageDir } = require('../../configuration/config');
 const { shortenNodeId } = require('../../util/nodeUtil');
