@@ -40,7 +40,7 @@ const createNode = (id, dockerSocketPath, correlationId) => {
   };
   return rpRetry(rpOptions)
     .catch((err) => {
-      throw getRichError('System', 'Failed to post node from edgedaemon', { id, dockerSocketPath }, err, 'error', correlationId);
+      throw getRichError('Conflict', 'Failed to post node from edgedaemon', { id, dockerSocketPath }, err, 'error', correlationId);
     })
     .then((res) => res.data);
 };

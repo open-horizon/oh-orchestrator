@@ -2,14 +2,12 @@ const fs = require('fs-extra');
 
 const { getRichError } = require('@mimik/response-helper');
 
-const { nodePoliciesDir } = require('../../configuration/config');
-
-const getPolicyFilePath = (nodeId) => `${nodePoliciesDir}/policy_${nodeId}.json`;
+const { getNodePolicyFilePath } = require('./util');
 
 const createPolicyFile = (nodeId, properties = [], constraints = [], correlationId) => {
-  const filePath = getPolicyFilePath(nodeId);
+  const filePath = getNodePolicyFilePath(nodeId);
 
-  return fs.ensureDir(nodePoliciesDir)
+  return fs.ensureFile(filePath)
     .then(() => fs.writeJSON(filePath, { properties, constraints })
       .then(() => filePath)
       .catch((error) => {
@@ -28,7 +26,7 @@ const createPolicyFile = (nodeId, properties = [], constraints = [], correlation
 };
 
 const removePolicyFile = (nodeId, correlationId) => {
-  const filePath = getPolicyFilePath(nodeId);
+  const filePath = getNodePolicyFilePath(nodeId);
 
   return fs.remove(filePath)
     .catch((error) => {

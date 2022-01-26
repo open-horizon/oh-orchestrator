@@ -31,7 +31,7 @@ const pack = require('../../package.json');
  * | ESS_GATEWAY_DEPLOYMENT_PROPERTY_TYPE | ESS gateway deployment property type | deployment |
  * | ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME | ESS gateway deployment property name | location |
  * | ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE | ESS gateway deployment property value  | gatewayNode |
- * | ESS_OBJECTS_POLLING_INTERVAL | interval at which oh-orchestrator will poll mcdn | 30000 | in ms |
+ * | ESS_OBJECTS_POLLING_INTERVAL | interval at which oh-orchestrator will poll mcdn | 5000 | in ms |
  * | DOCKER_SOCKET_PATH | Path to the docker daemon socket | /var/run/docker.sock |
  * | NODE_POLICIES_DIR | Directory to temporarily store node policies in | /var/tmp/oh/policies |
  * | ANAX_CONTAINERS_STORAGE_DIR | Directory to store anax data for container in | /var/tmp/oh/storage |
@@ -59,6 +59,8 @@ module.exports = (() => {
     trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
 
+  const ohStorageBasePath = '/var/tmp/oh/';
+
   const configuration = setConfig(pack, {
     dependencies: {
       MDEPLOY: {
@@ -78,10 +80,10 @@ module.exports = (() => {
       hzn: {
         orgId: process.env.HZN_ORG_ID || 'myorg',
         cssUrl: process.env.HZN_CSS_URL,
+        agbotUrl: process.env.HZN_AGBOT_URL,
         exchangeUrl: process.env.HZN_EXCHANGE_URL,
         exchangeUserAuth: process.env.HZN_EXCHANGE_USER_AUTH,
         defaultNodeToken: process.env.HZN_DEFAULT_NODE_TOKEN || 'nodeToken',
-        cliConfigFile: process.env.HZN_CLI_CONFIG_FILE || '/etc/default/horizon',
         ess: {
           trackedObjectTypes,
           gatewayDeploymentPropertyType: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_TYPE || 'deployment',
@@ -97,15 +99,17 @@ module.exports = (() => {
         mESSEndpoint: edgeEngineMESSEndpoint,
       },
       mcdnAuthToken: process.env.MCDN_AUTH_TOKEN || '1234',
+      anaxDockerTag: process.env.ANAX_DOCKER_TAG || '2.30.0-708',
       dockerSocketPath: process.env.DOCKER_SOCKET_PATH || '/var/run/docker.sock',
-      nodePoliciesDir: process.env.NODE_POLICIES_DIR || '/var/tmp/oh/policies',
-      essObjectsStorageDir: process.env.ESS_OBJECTS_STORAGE_DIR || '/var/tmp/oh/essStorage',
-      anaxContainersStorageDir: process.env.ANAX_CONTAINERS_STORAGE_DIR || '/var/tmp/oh/anaxStorage',
-      essObjectsPollingInterval: parseInt(process.env.ESS_OBJECTS_POLLING_INTERVAL, 10) || 30000,
+      nodesDir: process.env.ANAX_NODE_DIR || `${ohStorageBasePath}nodes`,
+      nodeConfigsDir: process.env.ANAX_NODE_CONFIGS_DIR || `${ohStorageBasePath}nodeConfigs`,
+      nodePoliciesDir: process.env.ANAX_NODE_POLICIES_DIR || `${ohStorageBasePath}nodePolicies`,
+      essObjectsStorageDir: process.env.ESS_OBJECTS_STORAGE_DIR || `${ohStorageBasePath}essStorage`,
+      essObjectsPollingInterval: parseInt(process.env.ESS_OBJECTS_POLLING_INTERVAL, 10) || 5000,
       edgeNodesSyncJobInterval: parseInt(process.env.EDGE_NODES_SYNC_JOB_INTERVAL, 10) || 60,
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
-      anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8299,
+      anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8999,
     },
   });
 

@@ -43,7 +43,8 @@
   ],
   "private": true,
   "dependencies": {
-    "@mimik/configuration": "4.4.1",
+    "@mimik/cluster": "2.4.0",
+    "@mimik/configuration": "4.4.4",
     "@mimik/init": "3.6.0",
     "@mimik/response-helper": "2.6.0",
     "@mimik/request-helper": "1.7.3",
@@ -54,15 +55,11 @@
     "bluebird": "3.7.2",
     "connect": "3.7.0",
     "fs-extra": "10.0.0",
-    "get-port": "6.0.0",
+    "get-port": "5.1.1",
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@mimik/local": "~4.4.2",
-    "eslint-config-airbnb": "18.2.1",
-    "eslint-plugin-import": "2.25.3",
-    "eslint-plugin-jsx-a11y": "6.5.1",
-    "eslint-plugin-react": "7.27.1",
+    "@mimik/local": "~4.4.5",
     "gulp": "4.0.2",
     "husky": "7.0.4"
   },

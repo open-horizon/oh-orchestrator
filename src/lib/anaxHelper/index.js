@@ -48,7 +48,7 @@ const deployAndRegisterAnaxNode = (nodeId, nodePort, nodeProperties, customDocke
   deployRequests[nodeId] = true;
   const shortenedNodeId = shortenNodeId(nodeId); // Anax does not support large nodeIds, left some space for flags
 
-  return createPolicyFile(nodeId, nodeProperties)
+  return createPolicyFile(shortenedNodeId, nodeProperties)
     .then((policyFilePath) => deployAnaxNode(shortenedNodeId, nodePort, customDockerSocketPath, correlationId)
       .delay(timeoutBWAnaxInitializationAndRegisteration)
       .then(() => registerAnaxNode(shortenedNodeId, nodePort, policyFilePath, correlationId)
@@ -65,11 +65,11 @@ const deployAndRegisterAnaxNode = (nodeId, nodePort, nodeProperties, customDocke
       }))
     .finally(() => {
       delete deployRequests[nodeId];
-      return removePolicyFile(nodeId, correlationId);
+      // return removePolicyFile(nodeId, correlationId);
     });
 };
 
-const initializeGatewayNodes = () => {
+const initializeGatewayNodes = (correlationId) => {
   const nodeId = gatewayNodeIds.DOCKER;
   const nodePort = gatewayNodeIdsPortsMap[gatewayNodeIds.DOCKER];
   const nodeProperties = [
@@ -78,7 +78,7 @@ const initializeGatewayNodes = () => {
       value: 'gatewayNode',
     },
   ];
-  return deployAndRegisterAnaxNode(nodeId, nodePort, nodeProperties, dockerSocketPath);
+  return deployAndRegisterAnaxNode(nodeId, nodePort, nodeProperties, dockerSocketPath, false, correlationId);
 };
 
 const initializeAnaxNodeForEdgeNode = (node, correlationId) => {

@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 
-const { getRichError } = require('@mimik/response-helper');
 const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
 const { getCorrelationId } = require('@mimik/request-helper');
 
 const { edgeNodesSyncJobInterval } = require('../../configuration/config');
@@ -57,7 +57,7 @@ const processNode = (discoveredNode, correlationId) => {
         }
 
         return saveAndUpdateNode(discoveredNode, correlationId)
-          .then(() => terminateAnaxNodeForEdgeNode(persistedNode))
+          .then(() => terminateAnaxNodeForEdgeNode(persistedNode, correlationId))
           .then(() => {
             delete nodesToBeTerminated[discoveredNode.id];
           });
@@ -68,7 +68,7 @@ const processNode = (discoveredNode, correlationId) => {
 };
 
 const syncNodes = () => {
-  const correlationId = getCorrelationId();
+  const correlationId = getCorrelationId('edge-node-sync');
 
   logger.debug('Starting edgeNodeSyncJob', { correlationId });
   return getCurrentNode(correlationId)
@@ -107,7 +107,7 @@ const syncNodes = () => {
           });
           return nodes;
         })))
-    .then((nodes) => Promise.mapSeries(nodes, (node) => processNode(node)))
+    .then((nodes) => Promise.mapSeries(nodes, (node) => processNode(node, correlationId)))
     .then((errorResponses) => {
       const errors = errorResponses.filter((resp) => resp !== undefined);
 
@@ -116,7 +116,7 @@ const syncNodes = () => {
     });
 };
 
-const start = () => getClient()
+const start = (correlationId) => getClient(correlationId)
   .catch((error) => {
     throw getRichError('System', 'Could not connect to super mdeploy, error occured while fetching client status', { error }, null, 'error');
   })

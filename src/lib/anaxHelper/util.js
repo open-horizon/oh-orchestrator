@@ -1,6 +1,9 @@
-const scriptFileValues = {
-  ANAX_DEPLOYMENT_SCRIPT: 'deploy_anax.sh',
-};
+const {
+  nodesDir,
+  nodeConfigsDir,
+  nodePoliciesDir,
+  essObjectsStorageDir,
+} = require('../../configuration/config');
 
 const scriptCommandValues = {
   REGISTER_ANAX: 'hzn register',
@@ -8,7 +11,18 @@ const scriptCommandValues = {
   NUKE_DOCKER: 'docker rm -f $(docker ps -a -q)',
 };
 
+const getNodeDir = (nodeId) => `${nodesDir}/${nodeId}`;
+
+const getNodeConfigFilePath = (nodeId) => `${nodeConfigsDir}/${nodeId}`;
+
+const getNodePolicyFilePath = (nodeId) => `${nodePoliciesDir}/${nodeId}.json`;
+
+const getESSObjectsStorageDir = (nodeId) => `${essObjectsStorageDir}/${nodeId}`;
+
 module.exports = {
-  scriptFileValues,
+  getNodeDir,
+  getNodePolicyFilePath,
+  getNodeConfigFilePath,
+  getESSObjectsStorageDir,
   scriptCommandValues,
 };
