@@ -21,6 +21,7 @@ const pack = require('../../package.json');
  * | EDGEDAEMON_APIKEY | apiKey to use to reach edgedeamon | |
  * | HZN_ORG_ID | Hzn organization id to be used for registering anax nodes | myorg |
  * | HZN_CSS_URL | Hzn CSS Url | | example: http://192.168.1.77:9443
+ * | HZN_AGBOT_URL | Hzn Agbot Url | | example: http://192.168.1.77:3111
  * | HZN_EXCHANGE_URL | Hzn Exchange Url | | example: http://192.168.1.77:3090/v1/
  * | HZN_EXCHANGE_USER_AUTH | Hzn exchange user auth to be used for registering anax nodes | | example: admin:password
  * | HZN_DEFAULT_NODE_TOKEN | Hzn node token to use to register anax node with exchange | nodeToken | default nodeId is first 6 chars of edge nodeId. So node auth will be nodeId:nodeToken
@@ -58,8 +59,9 @@ module.exports = (() => {
   if (trackedObjectTypesStr && trackedObjectTypesStr !== '') {
     trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
-
-  const ohStorageBasePath = '/var/tmp/oh/';
+  
+  const homeDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+  const ohStorageBasePath = `${homeDir}/.oh/`;
 
   const configuration = setConfig(pack, {
     dependencies: {

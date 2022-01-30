@@ -1,9 +1,0 @@
-export HZN_EXCHANGE_URL=http://192.168.1.115:3090/v1/
-export HZN_FSS_CSSURL=http://192.168.1.115:9443
-export ANAX_NODE_ID=gatewayDocker
-export ANAX_NODE_PORT=8071
-export ANAX_STORAGE_BASE_PATH=/var/tmp/oh/anaxStorage
-export HORIZON_URL=http://localhost:8071
-export DOCKER_SOCKET=/var/run/docker.sock
-export HC_DOCKER_TAG=2.30.0-708
-src/scripts/deploy_anax.sh start
