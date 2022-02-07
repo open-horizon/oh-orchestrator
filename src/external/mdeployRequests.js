@@ -41,7 +41,7 @@ const getClient = (correlationId) => rp({
   },
 });
 
-const getClientForExternalNode = (externalNodeIds, correlationId) => rp({
+const getClientForExternalNodes = (externalNodeIds, correlationId) => rp({
   method: 'POST',
   headers: {
     'x-correlation-id': correlationId,
@@ -66,6 +66,47 @@ const getNodes = (correlationId) => rp({
   url: `${mdeployUrl}/nodes`,
 });
 
+const getContainersForExternalNode = (externalNodeId, correlationId) => rp({
+  method: 'POST',
+  headers: {
+    'x-correlation-id': correlationId,
+    apiKey,
+  },
+  url: `${mdeployUrl}/batchOps`,
+  data: {
+    nodes: [externalNodeId],
+    request: {
+      endpoint: '/containers',
+      method: 'GET',
+    },
+  },
+})
+  .then((response) => {
+    if (!response.data || !Array.isArray(response.data) || !response.data[0] || response.data[0].responseType !== 'success') {
+      throw new Error(response);
+    }
+    const { data } = response.data[0].responseBody;
+    return data;
+  })
+
+const deleteContainersForExternalNode = (externalNodeId, containerIds, correlationId) => Promise.map(containerIds, (containerId) => rp({
+  method: 'POST',
+  headers: {
+    'x-correlation-id': correlationId,
+    apiKey,
+  },
+  url: `${mdeployUrl}/batchOps`,
+  data: {
+    nodes: externalNodeId,
+    request: {
+      endpoint: `/containers/${containerIds}`,
+      method: 'DELETE',
+    },
+  },
+})
+// TODO Add log
+.catch(() => {}));
+
 const clientStatusValues = {
   ACTIVE: 'active',
   INACTIVE: 'inactive',
@@ -75,6 +116,8 @@ module.exports = {
   getNodes,
   getClient,
   healthcheck,
-  getClientForExternalNode,
+  getClientForExternalNodes,
+  getContainersForExternalNode,
+  deleteContainersForExternalNode,
   clientStatusValues,
 };

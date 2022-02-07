@@ -112,6 +112,7 @@ module.exports = (() => {
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
       anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8999,
+      edgeDeploymentContainerEnv: process.env.EDGE_DEPLOYMENT_CONTAINER_ENV || 'HZN_DEPLOYMENT_LOCATION=edgeNode',
     },
   });
 

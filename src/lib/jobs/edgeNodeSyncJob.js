@@ -23,7 +23,7 @@ const {
   clientStatusValues,
   getNodes,
   getClient,
-  getClientForExternalNode,
+  getClientForExternalNodes,
 } = require('../../external/mdeployRequests');
 
 const nodesToBeTerminated = {};
@@ -73,7 +73,7 @@ const syncNodes = () => {
   logger.debug('Starting edgeNodeSyncJob', { correlationId });
   return getCurrentNode(correlationId)
     .then((gatewayNode) => getNodes(correlationId)
-      .then((foundNodes) => getClientForExternalNode(foundNodes.map((foundNode) => foundNode.id), correlationId)
+      .then((foundNodes) => getClientForExternalNodes(foundNodes.map((foundNode) => foundNode.id), correlationId)
         .catch((error) => {
           throw getRichError('System', 'Error occured while fetching nodes client status using super mdeploy', { error }, null, 'error', correlationId);
         })
