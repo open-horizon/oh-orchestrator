@@ -62,7 +62,7 @@ const deployAndRegisterAnaxNode = (nodeId, nodePort, nodeProperties, customDocke
       }))
     .finally(() => {
       delete deployRequests[nodeId];
-      // return removePolicyFile(nodeId, correlationId);
+      return removePolicyFile(nodeId, correlationId);
     });
 };
 

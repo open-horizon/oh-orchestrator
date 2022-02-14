@@ -104,7 +104,6 @@ const deleteContainersForExternalNode = (externalNodeId, containerIds, correlati
     },
   },
 })
-// TODO Add log
 .catch(() => {}));
 
 const clientStatusValues = {

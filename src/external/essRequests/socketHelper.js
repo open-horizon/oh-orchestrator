@@ -53,9 +53,6 @@ const fileDownloadRequest = (nodeId, outputFilePath, request, correlationId) => 
 
   const callback = (res) => {
     res.pipe(dest);
-    // res.on('data', (data) => {
-    //   dest.write(data);
-    // });
 
     res.on('error', (error) => {
       reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
