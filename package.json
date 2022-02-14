@@ -54,6 +54,7 @@
     "@mimik/systeminfo": "2.3.8",
     "bluebird": "3.7.2",
     "connect": "3.7.0",
+    "form-data": "4.0.0",
     "fs-extra": "10.0.0",
     "get-port": "5.1.1",
     "uuid": "8.3.2"

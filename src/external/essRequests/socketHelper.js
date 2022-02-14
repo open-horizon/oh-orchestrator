@@ -39,18 +39,23 @@ const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, re
     });
   };
 
-  const clientRequest = https.request(request, callback);
-  if (request.body) clientRequest.write(request.body);
-  clientRequest.end();
+  try {
+    const clientRequest = https.request(request, callback);
+    if (request.body) clientRequest.write(request.body);
+    clientRequest.end();
+  } catch (error) {
+    reject(error);
+  }
 });
 
 const fileDownloadRequest = (nodeId, outputFilePath, request, correlationId) => new Promise((resolve, reject) => {
   const dest = fs.createWriteStream(outputFilePath);
 
   const callback = (res) => {
-    res.on('data', (data) => {
-      dest.write(data);
-    });
+    res.pipe(dest);
+    // res.on('data', (data) => {
+    //   dest.write(data);
+    // });
 
     res.on('error', (error) => {
       reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
@@ -60,9 +65,14 @@ const fileDownloadRequest = (nodeId, outputFilePath, request, correlationId) => 
       resolve();
     });
   };
-  const clientRequest = https.request(request, callback);
-  if (request.body) clientRequest.write(request.body);
-  clientRequest.end();
+
+  try {
+    const clientRequest = https.request(request, callback);
+    if (request.body) clientRequest.write(request.body);
+    clientRequest.end();  
+  } catch (error) {
+    reject(error);
+  }
 });
 
 module.exports = {

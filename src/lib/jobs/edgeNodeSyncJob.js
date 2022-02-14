@@ -7,7 +7,7 @@ const { getCorrelationId } = require('@mimik/request-helper');
 const { edgeNodesSyncJobInterval } = require('../../configuration/config');
 const { mdeployStatusValues } = require('../../util/nodeUtil');
 const { getCurrentNode } = require('../../external/jsonRPCRequests');
-const { initializePolling } = require('../essHelper');
+const { initializeESSPolling } = require('../anaxHelper');
 
 const {
   initializeAnaxNodeForEdgeNode,
@@ -26,6 +26,7 @@ const {
   getClientForExternalNodes,
 } = require('../../external/mdeployRequests');
 
+let interval;
 const nodesToBeTerminated = {};
 
 const processNode = (discoveredNode, correlationId) => {
@@ -34,7 +35,7 @@ const processNode = (discoveredNode, correlationId) => {
   const saveAndInitialize = () => saveAndUpdateNode(discoveredNode, correlationId)
     .then((node) => initializeAnaxNodeForEdgeNode(discoveredNode, correlationId)
       .then((nodeInitialized) => {
-        if (nodeInitialized) initializePolling(node, correlationId);
+        if (nodeInitialized) initializeESSPolling(node, correlationId);
       }))
     .catch((error) => error);
 
@@ -127,9 +128,15 @@ const start = (correlationId) => getClient(correlationId)
   })
   .then(() => {
     syncNodes();
-    setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
+    interval = setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
+  });
+
+const stop = () => Promise.resolve()
+  .then(() => {
+    clearInterval(interval);
   });
 
 module.exports = {
   start,
+  stop,
 };

@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const getPort = require('get-port');
 
 const { updateAnaxState } = require('../../models/nodeModel');
+const { initializePolling } =require('./essHelper');
 const {
   findNode,
   createNode,
@@ -19,7 +20,6 @@ const {
   gatewayNodeIdsPortsMap,
   mdeployStatusValues,
   anaxStatusValues,
-  shortenNodeId,
 } = require('../../util/nodeUtil');
 
 const {
@@ -41,17 +41,14 @@ const timeoutBWAnaxUnregisterationAndTermination = 4000; // 4 seconds in ms
 const deployRequests = {};
 
 const deployAndRegisterAnaxNode = (nodeId, nodePort, nodeProperties, customDockerSocketPath, isEdgeNode, correlationId) => {
-  if (deployRequests[nodeId]) {
-    return Promise.resolve();
-  }
+  if (deployRequests[nodeId]) Promise.resolve();
 
   deployRequests[nodeId] = true;
-  const shortenedNodeId = shortenNodeId(nodeId); // Anax does not support large nodeIds, left some space for flags
 
-  return createPolicyFile(shortenedNodeId, nodeProperties)
-    .then((policyFilePath) => deployAnaxNode(shortenedNodeId, nodePort, customDockerSocketPath, correlationId)
+  return createPolicyFile(nodeId, nodeProperties)
+    .then((policyFilePath) => deployAnaxNode(nodeId, nodePort, customDockerSocketPath, correlationId)
       .delay(timeoutBWAnaxInitializationAndRegisteration)
-      .then(() => registerAnaxNode(shortenedNodeId, nodePort, policyFilePath, correlationId)
+      .then(() => registerAnaxNode(nodeId, nodePort, policyFilePath, correlationId)
         .catch((error) => {
           if (!isEdgeNode) throw error;
           return updateAnaxState(nodeId, { status: anaxStatusValues.UNCONFIGURED, nodePort })
@@ -119,4 +116,5 @@ module.exports = {
   initializeGatewayNodes,
   initializeAnaxNodeForEdgeNode,
   terminateAnaxNodeForEdgeNode,
+  initializeESSPolling: initializePolling,
 };

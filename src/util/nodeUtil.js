@@ -16,12 +16,10 @@ const gatewayNodeIds = {
 const gatewayNodeIdsPortsMap = {};
 gatewayNodeIdsPortsMap[gatewayNodeIds.DOCKER] = 8071;
 
-const shortenNodeId = (nodeId) => nodeId.substr(0, 16);
 
 module.exports = {
   gatewayNodeIds,
   gatewayNodeIdsPortsMap,
   mdeployStatusValues,
   anaxStatusValues,
-  shortenNodeId,
 };

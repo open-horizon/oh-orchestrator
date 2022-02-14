@@ -7,8 +7,10 @@
 #
 # export HZN_NODE_ID=bc8ebd2abf839833
 # export DOCKER_SOCKET=/var/run/docker.sock
-# export HOST_SHARE_PATH=/var/tmp/oh/
 # export HORIZON_AGENT_PORT=8200
+# export HOST_SHARE_PATH="${HOME}/.oh/${HZN_NODE_ID}"
+# export ESS_AUTH_DIR="${HOST_SHARE_PATH}/essAuth"
+# export ESS_SOCKET_DIR="${HOST_SHARE_PATH}/essSocket"
 #
 ### Required envs in config file
 #
@@ -17,7 +19,7 @@
 # HZN_NODE_ID=bc8ebd2abf839833
 # HZN_ORG_ID=myorg
 # HZN_EXCHANGE_USER_AUTH=admin:password
-# HZN_AGBOT_URL=http://192.168.1.115:3111
+# HZN_AGBOT_URL=http://192.168.1.115:3111\
 #
 ### Required for hzn cli
 #
@@ -30,16 +32,17 @@
 
 ARCH=$(dpkg --print-architecture)
 DOCKER_NAME=anax_${HZN_NODE_ID}
-ANAX_SHARE_PATH=${ANAX_SHARE_PATH:-${HOST_SHARE_PATH}nodes/${HZN_NODE_ID}} # value should be reflected in the service config
-CONFIG_PATH=${CONFIG_PATH:-${HOST_SHARE_PATH}nodeConfigs/${HZN_NODE_ID}} # value should be reflected in the service config
 ANAX_IMAGE=${ANAX_IMAGE:-openhorizon/${ARCH}_anax}
 ANAX_TAG=${ANAX_TAG:-2.30.0-708}
 
 validateStart() {
   [[ -z "${HZN_NODE_ID}" ]] && echo "HZN_NODE_ID is required env" 1>&2 && exit 1
-  [[ -z "${DOCKER_SOCKET}" ]] && echo "DOCKER_SOCKET is required env" 1>&2 && exit 1
   [[ -z "${HORIZON_AGENT_PORT}" ]] && echo "HORIZON_AGENT_PORT is required env" 1>&2 && exit 1
+  [[ -z "${ESS_AUTH_DIR}" ]] && echo "ESS_AUTH_DIR is required env" 1>&2 && exit 1
+  [[ -z "${ESS_SOCKET_DIR}" ]] && echo "ESS_SOCKET_DIR is required env" 1>&2 && exit 1
+
   [[ ! -f "${CONFIG_PATH}" ]] && echo "CONFIG_PATH: $CONFIG_PATH file does not exist" 1>&2 && exit 1
+  [[ ! -S "${DOCKER_SOCKET}" ]] && echo "DOCKER_SOCKET: $DOCKER_SOCKET file does not exist" 1>&2 && exit 1
 }
 
 validateStop() {
@@ -52,10 +55,11 @@ start() {
 docker run -d -t --restart always --name $DOCKER_NAME --privileged \
 -p 127.0.0.1:${HORIZON_AGENT_PORT}:8510 -e DOCKER_NAME=${DOCKER_NAME} \
 -e HZN_VAR_RUN_BASE=/var/tmp/horizon/${DOCKER_NAME} \
--v ${DOCKER_SOCKET}:/var/run/docker.sock -v ${DOCKER_NAME}_var:/var/horizon/ \
--v ${DOCKER_NAME}_etc:/etc/horizon/ -v ${CONFIG_PATH}:/etc/default/horizon \
--v ${ANAX_SHARE_PATH}:/var/tmp/horizon/${DOCKER_NAME} \
+-v ${DOCKER_SOCKET}:/var/run/docker.sock -v ${CONFIG_PATH}:/etc/default/horizon \
+-v ${ESS_AUTH_DIR}:/var/horizon/ess-auth -v ${ESS_SOCKET_DIR}:/var/tmp/horizon/${DOCKER_NAME} \
 ${ANAX_IMAGE}:${ANAX_TAG}
+
+# -v ${DOCKER_NAME}_etc:/etc/horizon/ -v ${DOCKER_NAME}_var:/var/horizon/ \ Mappings not required
 }
 
 stop() {

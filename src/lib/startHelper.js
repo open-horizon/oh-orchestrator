@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const fs = require('fs-extra');
 
 const { getRichError } = require('@mimik/response-helper');
@@ -19,6 +18,9 @@ const startupTasks = (newCorrelationId) => {
 
   return makeScriptExecutable();
 }
+
+
+
 module.exports = {
   startupTasks,
 }

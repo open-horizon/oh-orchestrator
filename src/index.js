@@ -16,22 +16,13 @@ init(app, __dirname, config, [], cluster(config), {
     () => startupTasks(correlationId)
       .then(() => startJobs(correlationId)),
   ],
+  exitOps: [
+    () => cleanupAllNodes(getCorrelationId('service-stop-cleanup')),
+  ],
 }).then((result) => {
   ({ config } = result);
 });
 
-let SHUTDOWN = false;
-function cleanup() {
-  if (!SHUTDOWN) {
-    SHUTDOWN = true;
-
-    cleanupAllNodes(getCorrelationId('service-stop-cleanup'))
-      .finally(() => {
-        process.exit(0);
-      });
-  }
-}
-process.on('SIGINT', cleanup);
 
 
 module.exports = app;

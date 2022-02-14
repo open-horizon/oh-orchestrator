@@ -4,17 +4,19 @@ const fs = require('fs-extra');
 const logger = require('@mimik/sumologic-winston-logger');
 const { getRichError } = require('@mimik/response-helper');
 
-const { nodesDir } = require('../../configuration/config');
-const { shortenNodeId } = require('../../util/nodeUtil');
+const {
+  getESSSocketPath,
+  getESSAuthCerificatePath,
+  getESSAgreementAuthFilePath,
+} = require('../../util/anaxUtil');
 
 const getRequestData = (nodeId, agreementId, correlationId) => Promise.resolve()
   .then(() => {
     const authDataPromises = [];
 
-    const shortenedNodeId = shortenNodeId(nodeId);
-    const certFilePath = `${nodesDir}/${shortenedNodeId}/ess-auth/SSL/cert/cert.pem`;
-    const essSocketFilePath = `${nodesDir}/${shortenedNodeId}/essapi.sock`;
-    const authKeyFilePath = `${nodesDir}/${shortenedNodeId}/ess-auth/${agreementId}/auth.json`;
+    const certFilePath = getESSAuthCerificatePath(nodeId);
+    const authKeyFilePath = getESSAgreementAuthFilePath(nodeId, agreementId);
+    const essSocketFilePath = getESSSocketPath(nodeId);
 
     logger.debug(
       'Configured request files',

@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 
 const { getRichError } = require('@mimik/response-helper');
 
-const { getNodePolicyFilePath } = require('./util');
+const { getNodePolicyFilePath } = require('../../util/anaxUtil');
 
 const createPolicyFile = (nodeId, properties = [], constraints = [], correlationId) => {
   const filePath = getNodePolicyFilePath(nodeId);

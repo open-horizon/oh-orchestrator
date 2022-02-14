@@ -6,7 +6,7 @@ const { rpRetry } = require('@mimik/request-retry');
 const { getRichError } = require('@mimik/response-helper');
 
 const { scriptFileValues } = require('../../util/scriptUtil');
-const { scriptCommandValues } = require('../anaxHelper/util');
+const { scriptCommandValues } = require('../../util/anaxUtil');
 const { checkIfNodeConfigured } = require('../../external/anaxRequests');
 const { runScriptFile, runScriptCommand } = require('../scriptHelper');
 
@@ -23,9 +23,10 @@ const {
 } = require('../../configuration/config');
 
 const {
-  getNodeDir,
+  getESSAuthDir,
+  getESSSocketDir,
   getNodeConfigFilePath,
-} = require('../anaxHelper/util');
+} = require('../../util/anaxUtil');
 
 const timeout = () => new Promise((resolve, reject) => { setTimeout(resolve, 5000); });
 
@@ -70,7 +71,8 @@ const deployAnaxNode = (nodeId, nodePort, dockerSocketFilePath, correlationId) =
     {
       HZN_NODE_ID: nodeId,
       DOCKER_SOCKET: dockerSocketFilePath,
-      ANAX_SHARE_PATH: getNodeDir(nodeId),
+      ESS_AUTH_DIR: getESSAuthDir(nodeId),
+      ESS_SOCKET_DIR: getESSSocketDir(nodeId),
       CONFIG_PATH: getNodeConfigFilePath(nodeId),
       HORIZON_AGENT_PORT: nodePort,
       ANAX_TAG: anaxDockerTag,

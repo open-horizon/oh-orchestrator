@@ -14,6 +14,8 @@ const {
   clientStatusValues,
 } = require('../../external/mdeployRequests');
 
+let interval;
+
 const syncNodes = () => {
   const correlationId = getCorrelationId('gateway-node-sync');
   logger.debug('Starting gatewayNodeSyncJob', { correlationId });
@@ -50,9 +52,16 @@ const start = (correlationId) => getClient(correlationId)
     throw getRichError('System', 'Cannot start service, initializing gateway failed', error, null, 'error');
   })
   .then(() => {
-    setInterval(syncNodes, gatewayNodeSyncJobInterval * 1000);
+    interval = setInterval(syncNodes, gatewayNodeSyncJobInterval * 1000);
+  });
+
+
+const stop = () => Promise.resolve()
+  .then(() => {
+    clearInterval(interval);
   });
 
 module.exports = {
   start,
+  stop,
 };

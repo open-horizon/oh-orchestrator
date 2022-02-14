@@ -21,12 +21,12 @@ The following environment variables are needed to configure ohorchestrator:
 | HZN_DEFAULT_NODE_TOKEN | Hzn node token to use to register anax node with exchange | nodeToken | default nodeId is first 6 chars of edge nodeId. So node auth will be nodeId:nodeToken
 | HZN_CLI_CONFIG_FILE | File location where hzn config is stored | /etc/default/horizon | example file content: HZN_EXCHANGE_URL=http://192.168.1.77:3090/v1/\nHZN_FSS_CSSURL=http://192.168.1.77:9443\n
 | ESS_OBJECTS_STORAGE_DIR | ESS gateway deployment objects storage directory | |
-| ESS_TRACKED_OBJECT_TYPES | HZN Object types to fetch from ESS and serve using mCDN | | example: ml_model,reco_model
+| ESS_TRACKED_OBJECT_TYPES | HZN Object types to fetch from ESS and serve using mESS | | example: ml_model,reco_model
 | ESS_GATEWAY_DEPLOYMENT_NODE_IP | ESS gateway deployment node IP | |
 | ESS_GATEWAY_DEPLOYMENT_PROPERTY_TYPE | ESS gateway deployment property type | deployment |
 | ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME | ESS gateway deployment property name | location |
 | ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE | ESS gateway deployment property value  | gatewayNode |
-| ESS_OBJECTS_POLLING_INTERVAL | interval at which oh-orchestrator will poll mcdn | 5000 | in ms |
+| ESS_OBJECTS_POLLING_INTERVAL | interval at which oh-orchestrator will poll ESS | 5000 | in ms |
 | DOCKER_SOCKET_PATH | Path to the docker daemon socket | /var/run/docker.sock |
 | NODE_POLICIES_DIR | Directory to temporarily store node policies in | /var/tmp/oh/policies |
 | ANAX_CONTAINERS_STORAGE_DIR | Directory to store anax data for container in | /var/tmp/oh/storage |
@@ -34,7 +34,6 @@ The following environment variables are needed to configure ohorchestrator:
 | GATEWAY_NODE_SYNC_JOB_INTERVAL | Job interval to sync gateway node using super (gateway) mdeploy | 120 |
 | ANAX_CONTAINERS_PORT_NUM_START | Port range starting point to use for anax containers | 8200 |
 | ANAX_CONTAINERS_PORT_NUM_END | Port range ending point to use for anax containers | 8299 |
-| MCDN_AUTH_TOKEN | auth token to comminicate with mCDN service | 1234 |
 
 These values are on top of what is needed in the [configuration](https://bitbucket.org/mimiktech/configuration) library.
 

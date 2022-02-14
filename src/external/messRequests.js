@@ -1,22 +1,20 @@
 const fs = require('fs-extra');
+const FormData = require('form-data');
 
 const { rpRetry } = require('@mimik/request-retry');
 const logger = require('@mimik/sumologic-winston-logger');
 
 const config = require('../configuration/config');
 
-const messUrl = config.dependencies.MESS.url;
-const { apiKey } = config.dependencies.MESS.apiKey;
+const { url, apiKey } = config.dependencies.MESS;
 
-const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
-  logger.debug('===> postFile', { nodeId, pathName, fileName }, correlationId);
-  return rpRetry({
+const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => rpRetry({
     method: 'POST',
     headers: {
       'x-correlation-id': correlationId,
       apiKey,
     },
-    url: `${messUrl}/objects`,
+    url: `${url}/objects`,
     data: {
       id: fileName,
       type: pathName,
@@ -28,30 +26,22 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
       ],
     },
   })
-    .catch((error) => {
-      logger.error('===> error posting object metadata', { error }, correlationId);
-    })
-    .then(() => rpRetry({
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'x-correlation-id': correlationId,
-        apiKey,
-      },
-      url: `${messUrl}/objects/${pathName}/${fileName}/data`,
-      formData: {
-        file: {
-          value: fs.createReadStream(localFilePath),
-          options: {
-            filename: fileName,
-          },
+    .then(() => {
+      const form = new FormData();
+      form.append('file', fs.createReadStream(localFilePath));
+
+
+      return rpRetry({
+        method: 'PUT',
+        headers: {
+          ...form.getHeaders(),
+          'x-correlation-id': correlationId,
+          apiKey,
         },
-      },
-    }))
-    .catch((error) => {
-      logger.error('===> error posting object DATA', { error }, correlationId);
+        url: `${url}/objects/${pathName}/${fileName}/data`,
+        data: form,
+      })
     });
-};
 
 module.exports = {
   postFile,
