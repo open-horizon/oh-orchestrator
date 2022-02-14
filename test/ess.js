@@ -26,34 +26,34 @@ getObjectsByType(nodeId, agreementId, objectType, correlationId)
     throw error;
   });
 
-// markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId)
-//   .then((data) => {
-//     console.log('===> markObjectConsumed success', data);
-//     return data;
-//   })
-//   .catch((error) => {
-//     console.log('===> markObjectConsumed error', error);
-//     throw error;
-//   });
+markObjectReceived(nodeId, agreementId, objectType, objectId, correlationId)
+  .then((data) => {
+    console.log('===> markObjectConsumed success', data);
+    return data;
+  })
+  .catch((error) => {
+    console.log('===> markObjectConsumed error', error);
+    throw error;
+  });
 
-// downloadObjectFile(nodeId, agreementId, objectType, objectId, correlationId)
-//   .then((data) => {
-//     console.log('===> getObjectsByType success', data);
-//     return data;
-//   })
-//   .catch((error) => {
-//     console.log('===> getObjectsByType error', error);
-//     throw error;
-//   });
+downloadObjectFile(nodeId, agreementId, objectType, objectId, correlationId)
+  .then((data) => {
+    console.log('===> getObjectsByType success', data);
+    return data;
+  })
+  .catch((error) => {
+    console.log('===> getObjectsByType error', error);
+    throw error;
+  });
 
-// const receiverUrl = 'http://localhost:3000';
+const receiverUrl = 'http://localhost:3000';
 
-// establishObectTypeWebhook(nodeId, agreementId, objectType, receiverUrl, correlationId)
-//   .then((data) => {
-//     console.log('===> establishObjectTypeWebhook success', data);
-//     return data;
-//   })
-//   .catch((error) => {
-//     console.log('===> establishObjectTypeWebhook error', error);
-//     throw error;
-//   });
+establishObectTypeWebhook(nodeId, agreementId, objectType, receiverUrl, correlationId)
+  .then((data) => {
+    console.log('===> establishObjectTypeWebhook success', data);
+    return data;
+  })
+  .catch((error) => {
+    console.log('===> establishObjectTypeWebhook error', error);
+    throw error;
+  });
