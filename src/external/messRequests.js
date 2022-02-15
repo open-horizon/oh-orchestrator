@@ -26,6 +26,11 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => r
       ],
     },
   })
+    .catch((err) => {
+      if (err.statusCode === 409 || err.statusCode === 400) return;
+
+      throw err;
+    })
     .then(() => {
       const form = new FormData();
       form.append('file', fs.createReadStream(localFilePath));
