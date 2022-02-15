@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const { getRichError } = require('@bananabread/response-helper');
+const { getRichError } = require('@mimik/response-helper');
 
 const nodes = {};
 

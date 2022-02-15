@@ -1,8 +1,8 @@
 {
   "name": "mimik_ohorchestrator",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "swaggerFile": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "account": "mimik",
     "name": "ohorchestrator"
   },
@@ -43,31 +43,29 @@
   ],
   "private": true,
   "dependencies": {
-    "@bananabread/configuration": "4.4.0",
-    "@bananabread/init": "4.0.0",
-    "@bananabread/oauth-helper": "1.9.6",
-    "@bananabread/response-helper": "2.5.0",
-    "@bananabread/request-helper": "1.7.3",
-    "@bananabread/sumologic-winston-logger": "1.6.6",
-    "@bananabread/swagger-helper": "2.5.0",
-    "@bananabread/systeminfo": "2.3.8",
+    "@mimik/cluster": "2.4.0",
+    "@mimik/configuration": "4.4.4",
+    "@mimik/init": "3.6.0",
+    "@mimik/response-helper": "2.6.0",
+    "@mimik/request-helper": "1.7.3",
+    "@mimik/request-retry": "2.0.6",
+    "@mimik/sumologic-winston-logger": "1.6.6",
+    "@mimik/swagger-helper": "2.5.0",
+    "@mimik/systeminfo": "2.3.8",
     "bluebird": "3.7.2",
     "connect": "3.7.0",
+    "form-data": "4.0.0",
     "fs-extra": "10.0.0",
     "get-port": "5.1.1",
-    "request-promise": "4.2.6",
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@bananabread/local": "~4.4.0",
-    "eslint-plugin-import": "2.24.2",
-    "eslint-plugin-jsx-a11y": "6.4.1",
-    "eslint-plugin-react": "7.25.3",
+    "@mimik/local": "~4.4.5",
     "gulp": "4.0.2",
-    "husky": "7.0.2"
+    "husky": "7.0.4"
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/mimiktech/ohorchestrator"
+    "url": "https://bitbucket.org/mimiktech/oh-orchestrator"
   }
 }

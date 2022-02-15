@@ -1,3 +1,3 @@
-const { commitCheckMsg } = require('@bananabread/local');
+const { commitCheckMsg } = require('@mimik/local');
 
 commitCheckMsg();

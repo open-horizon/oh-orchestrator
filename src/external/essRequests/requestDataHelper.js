@@ -1,20 +1,22 @@
 const Promise = require('bluebird');
 const fs = require('fs-extra');
 
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
 
-const { anaxContainersStorageDir } = require('../../configuration/config');
-const { shortenNodeId } = require('../../util/nodeUtil');
+const {
+  getESSSocketPath,
+  getESSAuthCerificatePath,
+  getESSAgreementAuthFilePath,
+} = require('../../util/anaxUtil');
 
-const getRequestData = (nodeId, agreementId) => Promise.resolve()
+const getRequestData = (nodeId, agreementId, correlationId) => Promise.resolve()
   .then(() => {
     const authDataPromises = [];
 
-    const shortenedNodeId = shortenNodeId(nodeId);
-    const certFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/ess-auth/SSL/cert/cert.pem`;
-    const essSocketFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/fss-domain-socket/essapi.sock`;
-    const authKeyFilePath = `${anaxContainersStorageDir}/${shortenedNodeId}/ess-auth/${agreementId}/auth.json`;
+    const certFilePath = getESSAuthCerificatePath(nodeId);
+    const authKeyFilePath = getESSAgreementAuthFilePath(nodeId, agreementId);
+    const essSocketFilePath = getESSSocketPath(nodeId);
 
     logger.debug(
       'Configured request files',

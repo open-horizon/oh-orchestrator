@@ -1,27 +1,21 @@
-const rp = require('request-promise');
 const fs = require('fs-extra');
+const FormData = require('form-data');
+
+const { rpRetry } = require('@mimik/request-retry');
+const logger = require('@mimik/sumologic-winston-logger');
 
 const config = require('../configuration/config');
 
-const {
-  edgeEngine: {
-    url: edgeEngineUrl,
-    projectId: edgeEngineProjectId,
-  },
-} = config;
+const { url, apiKey } = config.dependencies.MESS;
 
-const messUrl = `${edgeEngineUrl}/${edgeEngineProjectId}/mess/v1`;
-
-const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
-  console.log('===> postFile', { nodeId, pathName, fileName });
-
-  return rp({
-    uri: `${messUrl}/objects`,
+const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => rpRetry({
     method: 'POST',
     headers: {
       'x-correlation-id': correlationId,
+      apiKey,
     },
-    body: {
+    url: `${url}/objects`,
+    data: {
       id: fileName,
       type: pathName,
       version: '1.0.0',
@@ -31,33 +25,28 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => {
         },
       ],
     },
-    json: true,
   })
-    .catch(() => {
+    .catch((err) => {
+      if (err.statusCode === 409 || err.statusCode === 400) return;
 
+      throw err;
     })
-    .catch((error) => {
-      console.log('===> error posting object metadata', error);
-    })
-    .then(() => rp({
-      uri: `${messUrl}/objects/${pathName}/${fileName}/data`,
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      formData: {
-        file: {
-          value: fs.createReadStream(localFilePath),
-          options: {
-            filename: fileName,
-          },
+    .then(() => {
+      const form = new FormData();
+      form.append('file', fs.createReadStream(localFilePath));
+
+
+      return rpRetry({
+        method: 'PUT',
+        headers: {
+          ...form.getHeaders(),
+          'x-correlation-id': correlationId,
+          apiKey,
         },
-      },
-    }))
-    .catch((error) => {
-      console.log('===> error posting object DATA', error);
+        url: `${url}/objects/${pathName}/${fileName}/data`,
+        data: form,
+      })
     });
-};
 
 module.exports = {
   postFile,

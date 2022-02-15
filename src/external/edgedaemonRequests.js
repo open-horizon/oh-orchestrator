@@ -1,21 +1,21 @@
-const oAuthHelper = require('@bananabread/oauth-helper');
-const { getRichError } = require('@bananabread/response-helper');
+const { getRichError } = require('@mimik/response-helper');
+const { rpRetry } = require('@mimik/request-retry');
 
 const config = require('../configuration/config');
 
 const edgedaemonUrl = config.dependencies.EDGEDAEMON.url;
-const { rpAuth } = oAuthHelper(config);
+const { apiKey } = config.dependencies.EDGEDAEMON;
 
 const getNodes = (correlationId) => {
   const rpOptions = {
     method: 'GET',
     headers: {
       'x-correlation-id': correlationId,
+      apiKey,
     },
     url: `${edgedaemonUrl}/nodes`,
-    json: true,
   };
-  return rpAuth('EDGEDAEMON', rpOptions)
+  return rpRetry(rpOptions)
     .catch((err) => {
       throw getRichError('System', 'Failed to get nodes from edgedaemon', null, err, 'error', correlationId);
     })
@@ -30,15 +30,18 @@ const createNode = (id, dockerSocketPath, correlationId) => {
     method: 'POST',
     headers: {
       'x-correlation-id': correlationId,
+      apiKey,
     },
     url: `${edgedaemonUrl}/nodes`,
-    body: {
+    data: {
       id,
       dockerSocketPath,
     },
-    json: true,
   };
-  return rpAuth('EDGEDAEMON', rpOptions)
+  return rpRetry(rpOptions)
+    .catch((err) => {
+      throw getRichError('Conflict', 'Failed to post node from edgedaemon', { id, dockerSocketPath }, err, 'error', correlationId);
+    })
     .then((res) => res.data);
 };
 
@@ -47,11 +50,11 @@ const deleteNode = (id, correlationId) => {
     method: 'DELETE',
     headers: {
       'x-correlation-id': correlationId,
+      apiKey,
     },
     url: `${edgedaemonUrl}/nodes/${id}`,
-    json: true,
   };
-  return rpAuth('EDGEDAEMON', rpOptions)
+  return rpRetry(rpOptions)
     .catch((err) => {
       throw getRichError('System', 'Failed to delete node in edgedaemon', { id }, err, 'error', correlationId);
     })

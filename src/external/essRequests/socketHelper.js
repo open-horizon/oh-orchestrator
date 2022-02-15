@@ -2,8 +2,8 @@ const Promise = require('bluebird');
 const https = require('https');
 const fs = require('fs-extra');
 
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
 
 const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, reject) => {
   logger.info('Sending data request', { nodeId, request }, correlationId);
@@ -39,18 +39,20 @@ const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, re
     });
   };
 
-  const clientRequest = https.request(request, callback);
-  if (request.body) clientRequest.write(request.body);
-  clientRequest.end();
+  try {
+    const clientRequest = https.request(request, callback);
+    if (request.body) clientRequest.write(request.body);
+    clientRequest.end();
+  } catch (error) {
+    reject(error);
+  }
 });
 
-const fileDownloadRequest = (nodeId, outputFilePath, request) => new Promise((resolve, reject) => {
+const fileDownloadRequest = (nodeId, outputFilePath, request, correlationId) => new Promise((resolve, reject) => {
   const dest = fs.createWriteStream(outputFilePath);
 
   const callback = (res) => {
-    res.on('data', (data) => {
-      dest.write(data);
-    });
+    res.pipe(dest);
 
     res.on('error', (error) => {
       reject(getRichError('System', 'Received error from ESS socket', { nodeId, request, correlationId }, error, 'error', correlationId));
@@ -60,9 +62,14 @@ const fileDownloadRequest = (nodeId, outputFilePath, request) => new Promise((re
       resolve();
     });
   };
-  const clientRequest = https.request(request, callback);
-  if (request.body) clientRequest.write(request.body);
-  clientRequest.end();
+
+  try {
+    const clientRequest = https.request(request, callback);
+    if (request.body) clientRequest.write(request.body);
+    clientRequest.end();  
+  } catch (error) {
+    reject(error);
+  }
 });
 
 module.exports = {

@@ -1,7 +1,8 @@
 const uuid = require('uuid');
 
-const { getRichError } = require('@bananabread/response-helper');
-const logger = require('@bananabread/sumologic-winston-logger');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
+const { getCorrelationId } = require('@mimik/request-helper');
 
 const { gatewayNodeSyncJobInterval } = require('../../configuration/config');
 const {
@@ -13,8 +14,10 @@ const {
   clientStatusValues,
 } = require('../../external/mdeployRequests');
 
+let interval;
+
 const syncNodes = () => {
-  const correlationId = uuid.v4();
+  const correlationId = getCorrelationId('gateway-node-sync');
   logger.debug('Starting gatewayNodeSyncJob', { correlationId });
   return getClient(correlationId)
     .catch((error) => {
@@ -30,11 +33,11 @@ const syncNodes = () => {
     })
     .catch(() => {
       logger.error('Completed gatewayNodeSyncJob with errors, EXITING NODE PROCESS', { correlationId });
-      process.exit();
+      process.exit(1);
     });
 };
 
-const start = () => getClient()
+const start = (correlationId) => getClient(correlationId)
   .catch((error) => {
     throw getRichError('System', 'Could not connect to super mdeploy, error occured while fetching client status', { error }, null, 'error');
   })
@@ -43,15 +46,22 @@ const start = () => getClient()
       throw getRichError('System', 'Super mdeploy client is not activated', null, null, 'error');
     }
   })
-  .then(() => removeAllAnaxNodes())
-  .then(() => initializeGatewayNodes())
+  .then(removeAllAnaxNodes)
+  .then(() => initializeGatewayNodes(correlationId))
   .catch((error) => {
-    throw getRichError('System', 'Cannot start service initializing gateway failed', error, null, 'error');
+    throw getRichError('System', 'Cannot start service, initializing gateway failed', error, null, 'error');
   })
   .then(() => {
-    setInterval(syncNodes, gatewayNodeSyncJobInterval * 1000);
+    interval = setInterval(syncNodes, gatewayNodeSyncJobInterval * 1000);
+  });
+
+
+const stop = () => Promise.resolve()
+  .then(() => {
+    clearInterval(interval);
   });
 
 module.exports = {
   start,
+  stop,
 };

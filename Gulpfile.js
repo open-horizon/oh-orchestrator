@@ -5,7 +5,7 @@ const {
   test,
   add,
   docs,
-} = require('@bananabread/local');
+} = require('@mimik/local');
 
 gulp.task('lint', lint);
 gulp.task('test', test);

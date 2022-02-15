@@ -1,27 +1,36 @@
-const rp = require('request-promise');
+const { rpRetry } = require('@mimik/request-retry');
+const logger = require('@mimik/sumologic-winston-logger');
 
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getRichError } = require('@bananabread/response-helper');
+const CONFIGURED_FLAG = 'configured';
 
-const fetchActiveAgreements = (containerPort, correlationId) => rp({
-  uri: `http://localhost:${containerPort}/agreement`,
+const fetchActiveAgreements = (containerPort, correlationId) => rpRetry({
+  method: 'GET',
+  headers: {
+    'x-correlation-id': correlationId,
+  },
+  url: `http://localhost:${containerPort}/agreement`,
 })
   .then((response) => {
-    let parsedResponse = {};
-
-    try {
-      parsedResponse = JSON.parse(response);
-    }
-    catch (error) {
-      throw getRichError('System', 'Error occured while parsing response from Anax', { containerPort }, error, 'error', correlationId);
-    }
-    if (!parsedResponse.agreements) return [];
-    return parsedResponse.agreements.active;
+    if (!response.agreements) return [];
+    return response.agreements.active;
   })
   .catch((error) => {
     logger.error('Error occured while fetching agreements', { error }, correlationId);
   });
 
+const checkIfNodeConfigured = (containerPort, correlationId) => rpRetry({
+  method: 'GET',
+  headers: {
+    'x-correlation-id': correlationId,
+  },
+  url: `http://localhost:${containerPort}/node`,
+})
+  .then((response) => response.configstate.state === CONFIGURED_FLAG)
+  .catch((error) => {
+    logger.error('Error occured while fetching configuration state', { error }, correlationId);
+  });
+
 module.exports = {
+  checkIfNodeConfigured,
   fetchActiveAgreements,
 };

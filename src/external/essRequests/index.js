@@ -18,6 +18,17 @@ const getObjectsByType = (nodeId, agreementId, objectType, correlationId) => get
     return dataRequest(nodeId, completeRequest, correlationId);
   });
 
+const getObjectStatus = (nodeId, agreementId, objectType, objectId, correlationId) => getRequestData(nodeId, agreementId, correlationId)
+  .then((requestData) => {
+    const request = {
+      method: 'GET',
+      path: `${ESS_REQUEST_BASE_PATH}/objects/${objectType}/${objectId}/status`,
+    };
+
+    const completeRequest = { ...request, ...requestData };
+    return dataRequest(nodeId, completeRequest, correlationId);
+  });
+
 const markObjectReceived = (nodeId, agreementId, objectType, objectId, correlationId) => getRequestData(nodeId, agreementId, correlationId)
   .then((requestData) => {
     const request = {
@@ -57,6 +68,7 @@ const establishObectTypeWebhook = (nodeId, agreementId, objectType, receiverUrl,
   });
 
 module.exports = {
+  getObjectStatus,
   getObjectsByType,
   downloadObjectFile,
   markObjectReceived,

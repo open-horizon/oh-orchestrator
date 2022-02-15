@@ -1,11 +1,11 @@
-const oAuthHelper = require('@bananabread/oauth-helper');
+const { rpRetry } = require('@mimik/request-retry');
 
 const config = require('../configuration/config');
 
 const mdeployUrl = config.dependencies.MDEPLOY.url;
-const { rpAuth: rpAuthOrig } = oAuthHelper(config);
+const { apiKey } = config.dependencies.MDEPLOY;
 
-const rpAuth = (...args) => rpAuthOrig(...args)
+const rp = (...args) => rpRetry(...args)
   .then((response) => {
     if (!response) return undefined;
 
@@ -24,42 +24,87 @@ const rpAuth = (...args) => rpAuthOrig(...args)
     return parsedResponse;
   });
 
-const healthcheck = (correlationId) => rpAuth('MDEPLOY', {
-  url: `${mdeployUrl}/healthcheck`,
+const healthcheck = (correlationId) => rp({
+  method: 'GET',
   headers: {
     'x-correlation-id': correlationId,
   },
+  url: `${mdeployUrl}/healthcheck`,
 });
 
-const getClient = (correlationId) => rpAuth('MDEPLOY', {
+const getClient = (correlationId) => rp({
+  method: 'GET',
   url: `${mdeployUrl}/clients`,
   headers: {
     'x-correlation-id': correlationId,
+    apiKey,
   },
 });
 
-const getClientForExternalNode = (externalNodeIds, correlationId) => rpAuth('MDEPLOY', {
-  url: `${mdeployUrl}/batchOps`,
+const getClientForExternalNodes = (externalNodeIds, correlationId) => rp({
   method: 'POST',
   headers: {
     'x-correlation-id': correlationId,
+    apiKey,
   },
-  body: {
+  url: `${mdeployUrl}/batchOps`,
+  data: {
     nodes: externalNodeIds,
     request: {
       endpoint: '/clients',
       method: 'GET',
     },
   },
-  json: true,
 });
 
-const getNodes = (correlationId) => rpAuth('MDEPLOY', {
-  url: `${mdeployUrl}/nodes`,
+const getNodes = (correlationId) => rp({
+  method: 'GET',
   headers: {
     'x-correlation-id': correlationId,
+    apiKey,
   },
+  url: `${mdeployUrl}/nodes`,
 });
+
+const getContainersForExternalNode = (externalNodeId, correlationId) => rp({
+  method: 'POST',
+  headers: {
+    'x-correlation-id': correlationId,
+    apiKey,
+  },
+  url: `${mdeployUrl}/batchOps`,
+  data: {
+    nodes: [externalNodeId],
+    request: {
+      endpoint: '/containers',
+      method: 'GET',
+    },
+  },
+})
+  .then((response) => {
+    if (!response.data || !Array.isArray(response.data) || !response.data[0] || response.data[0].responseType !== 'success') {
+      throw new Error(response);
+    }
+    const { data } = response.data[0].responseBody;
+    return data;
+  })
+
+const deleteContainersForExternalNode = (externalNodeId, containerIds, correlationId) => Promise.map(containerIds, (containerId) => rp({
+  method: 'POST',
+  headers: {
+    'x-correlation-id': correlationId,
+    apiKey,
+  },
+  url: `${mdeployUrl}/batchOps`,
+  data: {
+    nodes: externalNodeId,
+    request: {
+      endpoint: `/containers/${containerIds}`,
+      method: 'DELETE',
+    },
+  },
+})
+.catch(() => {}));
 
 const clientStatusValues = {
   ACTIVE: 'active',
@@ -70,6 +115,8 @@ module.exports = {
   getNodes,
   getClient,
   healthcheck,
-  getClientForExternalNode,
+  getClientForExternalNodes,
+  getContainersForExternalNode,
+  deleteContainersForExternalNode,
   clientStatusValues,
 };

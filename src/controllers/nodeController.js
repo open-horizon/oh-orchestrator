@@ -1,5 +1,5 @@
-const { sendResult, sendError } = require('@bananabread/response-helper');
-const { convertParams } = require('@bananabread/swagger-helper');
+const { sendResult, sendError } = require('@mimik/response-helper');
+const { convertParams } = require('@mimik/swagger-helper');
 
 const nodeProcessor = require('../processors/nodeProcessor');
 

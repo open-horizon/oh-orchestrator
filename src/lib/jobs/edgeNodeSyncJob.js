@@ -1,13 +1,13 @@
 const Promise = require('bluebird');
 
-const { getRichError } = require('@bananabread/response-helper');
-const logger = require('@bananabread/sumologic-winston-logger');
-const { getCorrelationId } = require('@bananabread/request-helper');
+const logger = require('@mimik/sumologic-winston-logger');
+const { getRichError } = require('@mimik/response-helper');
+const { getCorrelationId } = require('@mimik/request-helper');
 
 const { edgeNodesSyncJobInterval } = require('../../configuration/config');
 const { mdeployStatusValues } = require('../../util/nodeUtil');
 const { getCurrentNode } = require('../../external/jsonRPCRequests');
-const { initializePolling } = require('../essHelper');
+const { initializeESSPolling } = require('../anaxHelper');
 
 const {
   initializeAnaxNodeForEdgeNode,
@@ -23,9 +23,10 @@ const {
   clientStatusValues,
   getNodes,
   getClient,
-  getClientForExternalNode,
+  getClientForExternalNodes,
 } = require('../../external/mdeployRequests');
 
+let interval;
 const nodesToBeTerminated = {};
 
 const processNode = (discoveredNode, correlationId) => {
@@ -34,7 +35,7 @@ const processNode = (discoveredNode, correlationId) => {
   const saveAndInitialize = () => saveAndUpdateNode(discoveredNode, correlationId)
     .then((node) => initializeAnaxNodeForEdgeNode(discoveredNode, correlationId)
       .then((nodeInitialized) => {
-        if (nodeInitialized) initializePolling(node, correlationId);
+        if (nodeInitialized) initializeESSPolling(node, correlationId);
       }))
     .catch((error) => error);
 
@@ -57,7 +58,7 @@ const processNode = (discoveredNode, correlationId) => {
         }
 
         return saveAndUpdateNode(discoveredNode, correlationId)
-          .then(() => terminateAnaxNodeForEdgeNode(persistedNode))
+          .then(() => terminateAnaxNodeForEdgeNode(persistedNode, correlationId))
           .then(() => {
             delete nodesToBeTerminated[discoveredNode.id];
           });
@@ -68,11 +69,12 @@ const processNode = (discoveredNode, correlationId) => {
 };
 
 const syncNodes = () => {
-  const correlationId = getCorrelationId();
+  const correlationId = getCorrelationId('edge-node-sync');
+
   logger.debug('Starting edgeNodeSyncJob', { correlationId });
-  return getCurrentNode()
+  return getCurrentNode(correlationId)
     .then((gatewayNode) => getNodes(correlationId)
-      .then((foundNodes) => getClientForExternalNode(foundNodes.map((foundNode) => foundNode.id), correlationId)
+      .then((foundNodes) => getClientForExternalNodes(foundNodes.map((foundNode) => foundNode.id), correlationId)
         .catch((error) => {
           throw getRichError('System', 'Error occured while fetching nodes client status using super mdeploy', { error }, null, 'error', correlationId);
         })
@@ -106,7 +108,7 @@ const syncNodes = () => {
           });
           return nodes;
         })))
-    .then((nodes) => Promise.mapSeries(nodes, (node) => processNode(node)))
+    .then((nodes) => Promise.mapSeries(nodes, (node) => processNode(node, correlationId)))
     .then((errorResponses) => {
       const errors = errorResponses.filter((resp) => resp !== undefined);
 
@@ -115,7 +117,7 @@ const syncNodes = () => {
     });
 };
 
-const start = () => getClient()
+const start = (correlationId) => getClient(correlationId)
   .catch((error) => {
     throw getRichError('System', 'Could not connect to super mdeploy, error occured while fetching client status', { error }, null, 'error');
   })
@@ -126,9 +128,15 @@ const start = () => getClient()
   })
   .then(() => {
     syncNodes();
-    setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
+    interval = setInterval(syncNodes, edgeNodesSyncJobInterval * 1000);
+  });
+
+const stop = () => Promise.resolve()
+  .then(() => {
+    clearInterval(interval);
   });
 
 module.exports = {
   start,
+  stop,
 };
