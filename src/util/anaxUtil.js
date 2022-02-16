@@ -8,6 +8,23 @@ const scriptCommandValues = {
   NUKE_DOCKER: 'docker rm -f $(docker ps -a -q)',
 };
 
+const getArch = () => {
+  let arch;
+
+  switch (process.arch) {
+    case 'x64':
+      arch = 'amd64'
+      break;
+    case 'arm64':
+      arch = 'arm64';
+      break;
+    default:
+      throw new Error(`Unexpected arch: ${process.arch}`)
+  }
+
+  return arch;
+}
+
 const getNodeDir = (nodeId) => `${nodesDir}/${nodeId}`;
 
 const getESSAuthDir = (nodeId) => `${getNodeDir(nodeId)}/essAuth`;
@@ -22,6 +39,7 @@ const getESSAuthCerificatePath = (nodeId) => `${getESSAuthDir(nodeId)}/SSL/cert/
 const getESSAgreementAuthFilePath = (nodeId, agreeementId) => `${getESSAuthDir(nodeId)}/${agreeementId}/auth.json`;
 
 module.exports = {
+  getArch,
   getESSAuthDir,
   getESSSocketDir,
   getESSStorageDir,

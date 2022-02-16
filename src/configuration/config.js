@@ -31,6 +31,7 @@ const pack = require('../../package.json');
  * | ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME | ESS gateway deployment property name | location |
  * | ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE | ESS gateway deployment property value  | gatewayNode |
  * | ESS_OBJECTS_POLLING_INTERVAL | interval at which oh-orchestrator will poll ESS | 5000 | in ms |
+ * | ESS_MAXIMUM_FILE_SIZE | Maximum file size to be allowed to deployed | 1000 | in MBs
  * | DOCKER_SOCKET_PATH | Path to the docker daemon socket | /var/run/docker.sock |
  * | NODES_MAPPING_DIR | Directory to temporarily store node policies, configs, ess content in | ~/.oh/nodes |
  * | EDGE_NODES_SYNC_JOB_INTERVAL | Job interval to sync edge nodes using super (gateway) mdeploy | 60 |
@@ -87,6 +88,7 @@ module.exports = (() => {
           gatewayDeploymentPropertyName: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME || 'location',
           gatewayDeploymentPropertyValue: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE || 'gatewayNode',
           gatewayNodeIpAddress: process.env.ESS_GATEWAY_DEPLOYMENT_NODE_IP || 'localhost',
+          maxFileSize: parseInt(process.env.MAXIMUM_FILE_SIZE, 10) * 1000000 || 1000000000,
         },
       },
       edgeEngine: {

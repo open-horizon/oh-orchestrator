@@ -6,7 +6,7 @@ const { rpRetry } = require('@mimik/request-retry');
 const { getRichError } = require('@mimik/response-helper');
 
 const { scriptFileValues } = require('../../util/scriptUtil');
-const { scriptCommandValues } = require('../../util/anaxUtil');
+const { getArch, scriptCommandValues } = require('../../util/anaxUtil');
 const { checkIfNodeConfigured } = require('../../external/anaxRequests');
 const { runScriptFile, runScriptCommand } = require('../scriptHelper');
 
@@ -76,6 +76,7 @@ const deployAnaxNode = (nodeId, nodePort, dockerSocketFilePath, correlationId) =
       CONFIG_PATH: getNodeConfigFilePath(nodeId),
       HORIZON_AGENT_PORT: nodePort,
       ANAX_TAG: anaxDockerTag,
+      ARCH: getArch(),
     },
     correlationId,
   ];
