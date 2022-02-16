@@ -30,7 +30,7 @@
 # export HZN_EXCHANGE_NODE_AUTH=bc8ebd2abf839833:nodeToken
 #
 
-ARCH=$(dpkg --print-architecture)
+ARCH=${ARCH:-$(dpkg --print-architecture)}
 DOCKER_NAME=anax_${HZN_NODE_ID}
 ANAX_IMAGE=${ANAX_IMAGE:-openhorizon/${ARCH}_anax}
 ANAX_TAG=${ANAX_TAG:-2.30.0-708}
