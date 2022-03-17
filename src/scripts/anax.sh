@@ -11,6 +11,7 @@
 # export HOST_SHARE_PATH="${HOME}/.oh/${HZN_NODE_ID}"
 # export ESS_AUTH_DIR="${HOST_SHARE_PATH}/essAuth"
 # export ESS_SOCKET_DIR="${HOST_SHARE_PATH}/essSocket"
+# export CONTAINER_LABEL=containerType=anaxNode
 #
 ### Required envs in config file
 #
@@ -34,6 +35,7 @@ ARCH=${ARCH:-$(dpkg --print-architecture)}
 DOCKER_NAME=anax_${HZN_NODE_ID}
 ANAX_IMAGE=${ANAX_IMAGE:-openhorizon/${ARCH}_anax}
 ANAX_TAG=${ANAX_TAG:-2.30.0-708}
+CONTAINER_LABEL=${CONTAINER_LABEL:-containerType=anaxNode}
 
 validateStart() {
   [[ -z "${HZN_NODE_ID}" ]] && echo "HZN_NODE_ID is required env" 1>&2 && exit 1
@@ -54,7 +56,7 @@ start() {
 
 docker run -d -t --restart always --name $DOCKER_NAME --privileged \
 -p 127.0.0.1:${HORIZON_AGENT_PORT}:8510 -e DOCKER_NAME=${DOCKER_NAME} \
--e HZN_VAR_RUN_BASE=/var/tmp/horizon/${DOCKER_NAME} \
+-e HZN_VAR_RUN_BASE=/var/tmp/horizon/${DOCKER_NAME} -l ${CONTAINER_LABEL} \
 -v ${DOCKER_SOCKET}:/var/run/docker.sock -v ${CONFIG_PATH}:/etc/default/horizon \
 -v ${ESS_AUTH_DIR}:/var/horizon/ess-auth -v ${ESS_SOCKET_DIR}:/var/tmp/horizon/${DOCKER_NAME} \
 ${ANAX_IMAGE}:${ANAX_TAG}
