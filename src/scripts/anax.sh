@@ -34,7 +34,7 @@
 ARCH=${ARCH:-$(dpkg --print-architecture)}
 DOCKER_NAME=anax_${HZN_NODE_ID}
 ANAX_IMAGE=${ANAX_IMAGE:-openhorizon/${ARCH}_anax}
-ANAX_TAG=${ANAX_TAG:-2.30.0-708}
+ANAX_TAG=${ANAX_TAG:-2.30.0-794}
 CONTAINER_LABEL=${CONTAINER_LABEL:-containerType=anaxNode}
 
 validateStart() {
