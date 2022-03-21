@@ -65,7 +65,7 @@ start() {
     validateStart
     
     docker run -d -t --restart always --name $DOCKER_NAME --privileged \
-    ADDITIONAL_FLAGS \
+    ${ADDITIONAL_FLAGS} \
     -p 127.0.0.1:${HORIZON_AGENT_PORT}:8510 -e DOCKER_NAME=${DOCKER_NAME} \
     -e HZN_VAR_RUN_BASE=/var/tmp/horizon/${DOCKER_NAME} -l ${CONTAINER_LABEL} \
     -v ${DOCKER_SOCKET}:/var/run/docker.sock -v ${CONFIG_PATH}:/etc/default/horizon \
