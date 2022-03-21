@@ -72,7 +72,6 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
 
               processingObjects[objectsBeingDownloadedFlag] = true;
 
-              // eslint-disable-next-line consistent-return
               return getCurrentNode(correlationId)
                 .then((gatewayNode) => {
                   const outputFileDir = getESSStorageDir(nodeId, agreementId, objectType);
