@@ -6,7 +6,7 @@
 	"LOG_LEVEL": "debug",
 	"CONSOLE_LEVEL": "silly",
 	"NO_STACK": "yes",
-	"LOG_MODE": "sumologic",
+	"LOG_MODE": "none",
 	// "LOG_MODE": "all",
 	// "LOG_MODE": "awsS3",
 	// "standAlone": "yes",
