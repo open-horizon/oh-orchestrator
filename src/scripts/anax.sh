@@ -52,7 +52,7 @@ validateStart() {
     [[ ! -f "${CONFIG_PATH}" ]] && echo "CONFIG_PATH: $CONFIG_PATH file does not exist" 1>&2 && exit 1
     [[ ! -S "${DOCKER_SOCKET}" ]] && echo "DOCKER_SOCKET: $DOCKER_SOCKET file does not exist" 1>&2 && exit 1
 
-    [[ ! -z "${CUSTOM_DNS_IP}" ]]; then
+    if [[ ! -z "${CUSTOM_DNS_IP}" ]]; then
         ADDITIONAL_FLAGS="--dns=${CUSTOM_DNS_IP}"
     fi
 }
