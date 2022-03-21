@@ -43,7 +43,8 @@ const dataRequest = (nodeId, request, correlationId) => new Promise((resolve, re
     const clientRequest = https.request(request, callback);
     if (request.body) clientRequest.write(request.body);
     clientRequest.end();
-  } catch (error) {
+  }
+  catch (error) {
     reject(error);
   }
 });
@@ -66,8 +67,9 @@ const fileDownloadRequest = (nodeId, outputFilePath, request, correlationId) => 
   try {
     const clientRequest = https.request(request, callback);
     if (request.body) clientRequest.write(request.body);
-    clientRequest.end();  
-  } catch (error) {
+    clientRequest.end();
+  }
+  catch (error) {
     reject(error);
   }
 });

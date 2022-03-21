@@ -41,6 +41,7 @@ const pack = require('../../package.json');
  * | EDGE_DEPLOYMENT_CONTAINER_ENV | edgeEngine container env representing edge deployment | HZN_DEPLOYMENT_LOCATION=edgeNode |
  * | ANAX_DOCKER_TAG | Anax container version | 2.30.0-794 |
  * | MAXIMUM_FILE_SIZE | Maximum file size that can be shared using content delivery (ESS/mess) | 100 | in MB
+ * | ANAX_CONTAINERS_CUSTOM_DNS_IP | Ip address of the DNS server for anax docker containers | 'empty string' | Not required
  *
  * These values are on top of what is needed in the [configuration](https://bitbucket.org/mimiktech/configuration) library.
  *
@@ -109,6 +110,7 @@ module.exports = (() => {
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
       anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8999,
+      anaxContainersCustomDNSIP: process.env.ANAX_CONTAINERS_CUSTOM_DNS_IP || '',
       edgeDeploymentContainerEnv: process.env.EDGE_DEPLOYMENT_CONTAINER_ENV || 'HZN_DEPLOYMENT_LOCATION=edgeNode',
     },
   });

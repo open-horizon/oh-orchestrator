@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const getPort = require('get-port');
 
 const { updateAnaxState } = require('../../models/nodeModel');
-const { initializePolling } =require('./essHelper');
+const { initializePolling } = require('./essHelper');
 const {
   findNode,
   createNode,

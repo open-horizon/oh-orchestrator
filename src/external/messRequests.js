@@ -35,7 +35,6 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => r
     const form = new FormData();
     form.append('file', fs.createReadStream(localFilePath));
 
-
     return rpRetry({
       method: 'PUT',
       headers: {
@@ -47,7 +46,7 @@ const postFile = (nodeId, pathName, fileName, localFilePath, correlationId) => r
       data: form,
       maxBodyLength: maxFileSize,
       maxContentLength: maxFileSize,
-    })
+    });
   });
 
 module.exports = {

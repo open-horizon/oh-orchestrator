@@ -9,7 +9,7 @@ const { startJobs } = require('./lib/jobs');
 const { startupTasks } = require('./lib/startHelper');
 const { cleanupAllNodes } = require('./lib/mdeployCleanup');
 
-let correlationId = getCorrelationId('service-startup-preOps');
+const correlationId = getCorrelationId('service-startup-preOps');
 
 init(app, __dirname, config, [], cluster(config), {
   preOps: [
@@ -22,7 +22,5 @@ init(app, __dirname, config, [], cluster(config), {
 }).then((result) => {
   ({ config } = result);
 });
-
-
 
 module.exports = app;

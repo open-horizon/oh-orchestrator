@@ -2,10 +2,10 @@ const Promise = require('bluebird');
 const fs = require('fs-extra');
 
 const logger = require('@mimik/sumologic-winston-logger');
-const { rpRetry } = require('@mimik/request-retry');
 const { getRichError } = require('@mimik/response-helper');
 
 const { scriptFileValues } = require('../../util/scriptUtil');
+const { anaxContainersCustomDNSIP } = require('../../configuration/config');
 const { getArch, scriptCommandValues } = require('../../util/anaxUtil');
 const { checkIfNodeConfigured } = require('../../external/anaxRequests');
 const { runScriptFile, runScriptCommand } = require('../scriptHelper');
@@ -28,10 +28,11 @@ const {
   getNodeConfigFilePath,
 } = require('../../util/anaxUtil');
 
-const timeout = () => new Promise((resolve, reject) => { setTimeout(resolve, 5000); });
+const timeout = () => new Promise((resolve) => { setTimeout(resolve, 5000); });
 
 const updateHznCliConfig = (nodeId, correlationId) => {
   const configFilePath = getNodeConfigFilePath(nodeId);
+  // eslint-disable-next-line max-len
   const configFileData = `HZN_EXCHANGE_URL=${exchangeUrl}\nHZN_FSS_CSSURL=${cssUrl}\nHZN_NODE_ID=${nodeId}\nHZN_ORG_ID=${orgId}\nHZN_EXCHANGE_USER_AUTH=${exchangeUserAuth}\nHZN_AGBOT_URL=${agbotUrl}\n`;
 
   return fs.ensureFile(configFilePath)
@@ -77,6 +78,7 @@ const deployAnaxNode = (nodeId, nodePort, dockerSocketFilePath, correlationId) =
       HORIZON_AGENT_PORT: nodePort,
       ANAX_TAG: anaxDockerTag,
       ARCH: getArch(),
+      CUSTOM_DNS_IP: anaxContainersCustomDNSIP === '' ? undefined : anaxContainersCustomDNSIP,
     },
     correlationId,
   ];
@@ -120,29 +122,27 @@ const registerAnaxNode = (nodeId, nodePort, policyFilePath, correlationId) => {
     });
 };
 
-const unregisterAnaxNode = (nodeId, nodePort, correlationId) => {
-  return runScriptCommand(
-    scriptCommandValues.UNREGISTER_ANAX,
-    undefined,
-    {
-      HZN_ORG_ID: orgId,
-      HORIZON_URL: `http://localhost:${nodePort}`,
-      HZN_EXCHANGE_URL: exchangeUrl,
-      HZN_EXCHANGE_USER_AUTH: exchangeUserAuth,
-      HZN_EXCHANGE_NODE_AUTH: `${nodeId}:${defaultNodeToken}`,
-    },
-    correlationId,
-  )
-    .then(timeout)
-    .then(() => checkIfNodeConfigured(nodePort, correlationId))
-    .then(() => {
-      if (isNodeConfigured) throw getRichError('System', 'Node did not get unregistered', { nodeId, nodePort, policyFilePath }, null, 'error', correlationId);
+const unregisterAnaxNode = (nodeId, nodePort, correlationId) => runScriptCommand(
+  scriptCommandValues.UNREGISTER_ANAX,
+  undefined,
+  {
+    HZN_ORG_ID: orgId,
+    HORIZON_URL: `http://localhost:${nodePort}`,
+    HZN_EXCHANGE_URL: exchangeUrl,
+    HZN_EXCHANGE_USER_AUTH: exchangeUserAuth,
+    HZN_EXCHANGE_NODE_AUTH: `${nodeId}:${defaultNodeToken}`,
+  },
+  correlationId,
+)
+  .then(timeout)
+  .then(() => checkIfNodeConfigured(nodePort, correlationId))
+  .then((isNodeConfigured) => {
+    if (isNodeConfigured) throw getRichError('System', 'Node did not get unregistered', { nodeId, nodePort }, null, 'error', correlationId);
 
-      logger.debug('Unregistered Anax Node', {
-        nodeId, nodePort, correlationId,
-      });
+    logger.debug('Unregistered Anax Node', {
+      nodeId, nodePort, correlationId,
     });
-};
+  });
 
 const purgeDocker = () => runScriptCommand(scriptCommandValues.NUKE_DOCKER)
   .catch(() => { }); // To catch if no containers found

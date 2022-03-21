@@ -18,10 +18,8 @@ const cleanupNode = (id, correlationId) => getContainersForExternalNode(id, corr
   // TODO Handle error
   .catch(() => { });
 
-const cleanupAllNodes = (correlationId) => {
-  return nodeModel.getAllNodes(correlationId)
-    .then((nodes) => Promise.map(nodes, ({ id }) => cleanupNode(id, correlationId)));
-};
+const cleanupAllNodes = (correlationId) => nodeModel.getAllNodes(correlationId)
+  .then((nodes) => Promise.map(nodes, ({ id }) => cleanupNode(id, correlationId)));
 
 module.exports = {
   cleanupNode,
