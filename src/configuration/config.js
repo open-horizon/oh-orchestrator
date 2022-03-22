@@ -38,6 +38,10 @@ const pack = require('../../package.json');
  * | GATEWAY_NODE_SYNC_JOB_INTERVAL | Job interval to sync gateway node using super (gateway) mdeploy | 120 |
  * | ANAX_CONTAINERS_PORT_NUM_START | Port range starting point to use for anax containers | 8200 |
  * | ANAX_CONTAINERS_PORT_NUM_END | Port range ending point to use for anax containers | 8299 |
+ * | EDGE_DEPLOYMENT_CONTAINER_ENV | edgeEngine container env representing edge deployment | HZN_DEPLOYMENT_LOCATION=edgeNode |
+ * | ANAX_DOCKER_TAG | Anax container version | 2.30.0-794 |
+ * | MAXIMUM_FILE_SIZE | Maximum file size that can be shared using content delivery (ESS/mess) | 100 | in MB
+ * | ANAX_CONTAINERS_CUSTOM_DNS_IP | Ip address of the DNS server for anax docker containers | 'empty string' | Not required
  *
  * These values are on top of what is needed in the [configuration](https://bitbucket.org/mimiktech/configuration) library.
  *
@@ -57,7 +61,8 @@ module.exports = (() => {
     trackedObjectTypes = trackedObjectTypesStr.split(',');
   }
 
-  const homeDir = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+  // eslint-disable-next-line @mimik/document-env/validate-document-env
+  const homeDir = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
 
   const configuration = setConfig(pack, {
     dependencies: {
@@ -88,7 +93,7 @@ module.exports = (() => {
           gatewayDeploymentPropertyName: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_NAME || 'location',
           gatewayDeploymentPropertyValue: process.env.ESS_GATEWAY_DEPLOYMENT_PROPERTY_VALUE || 'gatewayNode',
           gatewayNodeIpAddress: process.env.ESS_GATEWAY_DEPLOYMENT_NODE_IP || 'localhost',
-          maxFileSize: parseInt(process.env.MAXIMUM_FILE_SIZE, 10) * 1000000 || 1000000000,
+          maxFileSize: parseInt(process.env.MAXIMUM_FILE_SIZE, 10) * 1024 * 1024 || 100 * 1024 * 1024,
         },
       },
       edgeEngine: {
@@ -97,7 +102,7 @@ module.exports = (() => {
         mdeployEndpoint: edgeEngineMdeployEndpoint,
         mESSEndpoint: edgeEngineMESSEndpoint,
       },
-      anaxDockerTag: process.env.ANAX_DOCKER_TAG || '2.30.0-708',
+      anaxDockerTag: process.env.ANAX_DOCKER_TAG || '2.30.0-794',
       dockerSocketPath: process.env.DOCKER_SOCKET_PATH || '/var/run/docker.sock',
       nodesDir: process.env.NODES_MAPPING_DIR || `${homeDir}/.oh/nodes`,
       essObjectsPollingInterval: parseInt(process.env.ESS_OBJECTS_POLLING_INTERVAL, 10) || 5000,
@@ -105,6 +110,7 @@ module.exports = (() => {
       gatewayNodeSyncJobInterval: parseInt(process.env.GATEWAY_NODE_SYNC_JOB_INTERVAL, 10) || 120,
       anaxContainersPortNumStart: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_START, 10) || 8200,
       anaxContainersPortNumEnd: parseInt(process.env.ANAX_CONTAINERS_PORT_NUM_END, 10) || 8999,
+      anaxContainersCustomDNSIP: process.env.ANAX_CONTAINERS_CUSTOM_DNS_IP || '',
       edgeDeploymentContainerEnv: process.env.EDGE_DEPLOYMENT_CONTAINER_ENV || 'HZN_DEPLOYMENT_LOCATION=edgeNode',
     },
   });

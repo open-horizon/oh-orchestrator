@@ -16,7 +16,6 @@ const gatewayNodeIds = {
 const gatewayNodeIdsPortsMap = {};
 gatewayNodeIdsPortsMap[gatewayNodeIds.DOCKER] = 8071;
 
-
 module.exports = {
   gatewayNodeIds,
   gatewayNodeIdsPortsMap,

@@ -2,7 +2,6 @@ const Promise = require('bluebird');
 const childProcess = require('child_process');
 
 const logger = require('@mimik/sumologic-winston-logger');
-const { getRichError } = require('@mimik/response-helper');
 
 const runScriptFile = (scriptFileName, args = '', env = {}, correlationId) => {
   let scriptEnvs = '';

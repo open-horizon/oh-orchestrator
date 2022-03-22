@@ -87,9 +87,9 @@ const getContainersForExternalNode = (externalNodeId, correlationId) => rp({
     }
     const { data } = response.data[0].responseBody;
     return data;
-  })
+  });
 
-const deleteContainersForExternalNode = (externalNodeId, containerIds, correlationId) => Promise.map(containerIds, (containerId) => rp({
+const deleteContainersForExternalNode = (externalNodeId, containerIds, correlationId) => Promise.map(containerIds, () => rp({
   method: 'POST',
   headers: {
     'x-correlation-id': correlationId,
@@ -103,8 +103,7 @@ const deleteContainersForExternalNode = (externalNodeId, containerIds, correlati
       method: 'DELETE',
     },
   },
-})
-.catch(() => {}));
+}).catch(() => {}));
 
 const clientStatusValues = {
   ACTIVE: 'active',

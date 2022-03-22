@@ -17,10 +17,8 @@ const startupTasks = (newCorrelationId) => {
   correlationId = newCorrelationId;
 
   return makeScriptExecutable();
-}
-
-
+};
 
 module.exports = {
   startupTasks,
-}
+};

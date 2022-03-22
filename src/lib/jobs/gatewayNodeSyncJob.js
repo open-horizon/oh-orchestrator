@@ -1,5 +1,3 @@
-const uuid = require('uuid');
-
 const logger = require('@mimik/sumologic-winston-logger');
 const { getRichError } = require('@mimik/response-helper');
 const { getCorrelationId } = require('@mimik/request-helper');
@@ -54,7 +52,6 @@ const start = (correlationId) => getClient(correlationId)
   .then(() => {
     interval = setInterval(syncNodes, gatewayNodeSyncJobInterval * 1000);
   });
-
 
 const stop = () => Promise.resolve()
   .then(() => {

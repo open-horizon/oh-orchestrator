@@ -7,7 +7,7 @@ const {
 } = require('../src/external/essRequests');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-process.env.LOG_MODE="none";
+process.env.LOG_MODE = 'none';
 
 const nodeId = '89b5345b4a3d01ed5d053417e96bd9df320e765adb12dd9971485dc5';
 const agreementId = '6bec1300d84a95d0acca516f1855dd22fe8ec17bb36a165683ae2777e18baebf';

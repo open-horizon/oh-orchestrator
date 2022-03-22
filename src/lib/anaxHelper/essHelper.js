@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const fs = require('fs-extra');
 
 const logger = require('@mimik/sumologic-winston-logger');
@@ -31,8 +32,7 @@ const {
 } = require('../../configuration/config');
 
 const processingObjects = {};
-const ESS_OBJECT_DOWNLOADED_STATUS = 'completelyReceived';
-// const ESS_OBJECT_RECEIVED_STATUS = 'objreceived'; TODO remove if not used
+const ESS_OBJECT_DOWNLOADED_STATUS = 'completelyReceived'; // 'objreceived' is the final received status ie when received by oh-orchestrator and marked by API
 
 const getObjectsBeingDownloadedFlag = (nodeId, agreementId, objectType, objectId) => `${nodeId}_${agreementId}_${objectType}_${objectId}`;
 
@@ -59,8 +59,8 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
 
           const contentDeploymentInstructionProperty = objectProperties.find(
             (property) => property.type === gatewayDeploymentPropertyType
-              && property.name === gatewayDeploymentPropertyName
-          )
+              && property.name === gatewayDeploymentPropertyName,
+          );
 
           if (!contentDeploymentInstructionProperty) return;
 
@@ -89,14 +89,12 @@ const pollForObjectByType = (nodeId, agreementId, objectType, correlationId) => 
                 })
                 .finally(() => {
                   delete processingObjects[objectsBeingDownloadedFlag];
-                })
+                });
             });
         });
       })
       .catch(() => { });
   });
-
-
 
 const initializePolling = (node, correlationId) => {
   const { id: nodeId } = node;
